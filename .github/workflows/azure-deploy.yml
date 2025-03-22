@@ -38,6 +38,10 @@ jobs:
         touch schema_uploads/.gitkeep
         touch traces/.gitkeep
 
+    - name: Make startup script executable
+      run: |
+        chmod +x startup.sh
+
     - name: Deploy to Azure Web App
       uses: azure/webapps-deploy@v2
       with:
@@ -81,7 +85,7 @@ jobs:
         general-settings-json: |
           {
             "linuxFxVersion": "PYTHON|3.10",
-            "appCommandLine": "python test_app.py && gunicorn --log-level debug --bind=0.0.0.0:8000 wsgi:app"
+            "appCommandLine": "/home/site/wwwroot/startup.sh"
           }
       env:
         AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }} 
