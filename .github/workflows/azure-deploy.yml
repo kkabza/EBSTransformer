@@ -81,7 +81,7 @@ jobs:
         general-settings-json: |
           {
             "linuxFxVersion": "PYTHON|3.10",
-            "appCommandLine": "gunicorn --bind=0.0.0.0:8000 app:app"
+            "appCommandLine": "ls -la && python -c \"import sys; print(sys.path)\" && gunicorn --log-level debug --bind=0.0.0.0:8000 app:app"
           }
       env:
         AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }} 

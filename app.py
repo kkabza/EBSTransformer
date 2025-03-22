@@ -1418,5 +1418,7 @@ def download_output_file():
         flash(f'Error downloading file: {str(e)}', 'error')
         return redirect(url_for('outputs'))
 
+# This makes the app compatible with both direct execution and module imports
 if __name__ == '__main__':
-    app.run(debug=True) 
+    # Run the app directly when script is executed
+    app.run(host='0.0.0.0', port=int(os.environ.get('PORT', 8000))) 
