@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>{% block title %}ESB Transformer{% endblock %}</title>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;500;600;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+    
+    <!-- Material Icons -->
+    <link href="https://fonts.googleapis.com/css?family=Material+Icons+Outlined" rel="stylesheet">
+    
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/comparison.css') }}">
+    
+    {% block head %}{% endblock %}
+</head>
+<body>
+    <div class="wrapper">
+        <!-- Header -->
+        <header class="app-header">
+            <div class="container-fluid">
+                <div class="d-flex justify-content-between align-items-center py-3">
+                    <div class="d-flex align-items-center">
+                        <button id="sidebar-toggle" class="btn sidebar-toggle">
+                            <i class="fas fa-bars"></i>
+                        </button>
+                        <a href="/" class="logo ml-3">
+                            <span class="logo-text">ESB Transformer</span>
+                        </a>
+                    </div>
+                    <div class="d-flex align-items-center">
+                        <a href="/documentation" class="btn btn-sm btn-outline-light mr-2">
+                            <i class="fas fa-book"></i> Documentation
+                        </a>
+                        <a href="https://github.com/yourusername/esb-transformer" target="_blank" class="btn btn-sm btn-outline-light">
+                            <i class="fab fa-github"></i> GitHub
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </header>
+        
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h3>Navigation</h3>
+            </div>
+            <ul class="sidebar-menu">
+                <li class="{{ 'active' if request.path == '/' else '' }}">
+                    <a href="/">
+                        <i class="fas fa-home"></i>
+                        <span class="menu-text">Home</span>
+                    </a>
+                </li>
+                <li class="{{ 'active' if '/metrics' in request.path else '' }}">
+                    <a href="/metrics">
+                        <i class="fas fa-chart-bar"></i>
+                        <span class="menu-text">Metrics</span>
+                    </a>
+                </li>
+                <li class="{{ 'active' if '/schemas' in request.path else '' }}">
+                    <a href="/schemas">
+                        <i class="fas fa-sitemap"></i>
+                        <span class="menu-text">Schemas</span>
+                    </a>
+                </li>
+                <li class="{{ 'active' if '/documentation' in request.path else '' }}">
+                    <a href="/documentation">
+                        <i class="fas fa-book"></i>
+                        <span class="menu-text">Documentation</span>
+                    </a>
+                </li>
+            </ul>
+        </aside>
+        
+        <!-- Main Content -->
+        <div class="main-content">
+            <div class="container-fluid">
+                <div class="content-header">
+                    <h1 class="page-title">{% block page_title %}ESB Transformer{% endblock %}</h1>
+                </div>
+                <div class="content-body">
+                    {% with messages = get_flashed_messages(with_categories=true) %}
+                        {% if messages %}
+                            {% for category, message in messages %}
+                                <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                                    {{ message }}
+                                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                            {% endfor %}
+                        {% endif %}
+                    {% endwith %}
+                    
+                    {% block content %}{% endblock %}
+                    
+                    {% block footer %}
+                    <footer class="app-footer">
+                        <div class="footer-content">
+                            <div class="footer-logo">
+                                <img src="{{ url_for('static', filename='images/msftlogo.png') }}" alt="Microsoft Logo" height="30">
+                            </div>
+                            <div class="footer-copyright">
+                                &copy; {{ now.year }} Enterprise Service Bus - XML Transformation Service
+                            </div>
+                            <div class="footer-links">
+                                <a href="/documentation">Documentation</a>
+                                <a href="/about">About</a>
+                            </div>
+                        </div>
+                    </footer>
+                    {% endblock %}
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Loading Overlay -->
+    <div id="loading-overlay" class="loading-overlay" style="display: none;">
+        <div class="spinner"></div>
+        <p>Processing your file. This may take a moment...</p>
+    </div>
+    
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    
+    <!-- Bootstrap JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    
+    <!-- App JS -->
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+    
+    <!-- Sidebar Toggle Script -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const sidebarToggle = document.getElementById('sidebar-toggle');
+            const body = document.body;
+            
+            // Check if sidebar state is saved in localStorage
+            if (localStorage.getItem('sidebar-collapsed') === 'true') {
+                body.classList.add('sidebar-collapsed');
+            }
+            
+            sidebarToggle.addEventListener('click', function() {
+                body.classList.toggle('sidebar-collapsed');
+                
+                // Save sidebar state to localStorage
+                localStorage.setItem('sidebar-collapsed', body.classList.contains('sidebar-collapsed'));
+            });
+            
+            // Mobile sidebar toggle
+            if (window.innerWidth <= 768) {
+                sidebarToggle.addEventListener('click', function() {
+                    body.classList.toggle('sidebar-open');
+                });
+                
+                // Close sidebar when clicking outside
+                document.addEventListener('click', function(e) {
+                    if (!e.target.closest('.sidebar') && !e.target.closest('#sidebar-toggle') && body.classList.contains('sidebar-open')) {
+                        body.classList.remove('sidebar-open');
+                    }
+                });
+            }
+            
+            // Make all card headers sticky while scrolling
+            const cardHeaders = document.querySelectorAll('.card-header');
+            cardHeaders.forEach(header => {
+                header.classList.add('fixed-header');
+            });
+        });
+    </script>
+    
+    {% block scripts %}{% endblock %}
+</body>
+</html> 

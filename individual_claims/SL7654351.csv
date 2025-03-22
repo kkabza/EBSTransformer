@@ -1,0 +1,2 @@
+ClaimNumber,PolicyNumber,InsuredName,LossDate,GlassRepairCost,GlassType,VendorInvoiceNumber,VehicleMake,VehicleModel,VehicleYear,CustomerPhone,DamageDescription
+SL7654351,PN1122364,Gabriel Baker,2024-04-09,405.00,Windshield,INV775574,Ford,Escape,2018,555-123-4597,Spiderweb crack from central impact

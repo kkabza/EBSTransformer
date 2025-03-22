@@ -1,0 +1,2 @@
+ClaimNumber,PolicyNumber,InsuredName,LossDate,GlassRepairCost,GlassType,VendorInvoiceNumber,VehicleMake,VehicleModel,VehicleYear,CustomerPhone,DamageDescription
+SL7654368,PN1122381,Grace Rogers,2024-04-26,540.25,Rear Window,INV775591,Volvo,S60,2018,555-123-4614,Rear window damaged by falling tree limb

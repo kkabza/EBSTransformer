@@ -1,0 +1,2 @@
+ClaimNumber,PolicyNumber,InsuredName,LossDate,GlassRepairCost,GlassType,VendorInvoiceNumber,VehicleMake,VehicleModel,VehicleYear,CustomerPhone,DamageDescription
+SL7654353,PN1122366,Luke Carter,2024-04-11,540.50,Rear Window,INV775576,Nissan,Rogue,2019,555-123-4599,Complete break requiring full replacement

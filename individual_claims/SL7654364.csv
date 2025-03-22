@@ -1,0 +1,2 @@
+ClaimNumber,PolicyNumber,InsuredName,LossDate,GlassRepairCost,GlassType,VendorInvoiceNumber,VehicleMake,VehicleModel,VehicleYear,CustomerPhone,DamageDescription
+SL7654364,PN1122377,Bella Collins,2024-04-22,310.25,Side Window,INV775587,Dodge,Durango,2018,555-123-4610,Side window broken from vandalism

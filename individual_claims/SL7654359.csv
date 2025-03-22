@@ -1,0 +1,2 @@
+ClaimNumber,PolicyNumber,InsuredName,LossDate,GlassRepairCost,GlassType,VendorInvoiceNumber,VehicleMake,VehicleModel,VehicleYear,CustomerPhone,DamageDescription
+SL7654359,PN1122372,Julian Phillips,2024-04-17,530.00,Rear Window,INV775582,Audi,A4,2018,555-123-4605,Complex break pattern from impact

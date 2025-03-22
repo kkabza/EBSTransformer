@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
+    <xs:element name="Claim">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="ClaimHeader">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element name="ClaimNumber" type="xs:string"/>
+                            <xs:element name="ClaimDate" type="xs:date"/>
+                            <xs:element name="PolicyNumber" type="xs:string"/>
+                            <xs:element name="InsuredName" type="xs:string"/>
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+                <xs:element name="ClaimDetails">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element name="LossDate" type="xs:date"/>
+                            <xs:element name="LossDescription" type="xs:string"/>
+                            <xs:element name="LossLocation">
+                                <xs:complexType>
+                                    <xs:sequence>
+                                        <xs:element name="Address1" type="xs:string"/>
+                                        <xs:element name="Address2" type="xs:string" minOccurs="0"/>
+                                        <xs:element name="City" type="xs:string"/>
+                                        <xs:element name="State" type="xs:string"/>
+                                        <xs:element name="ZipCode" type="xs:string"/>
+                                        <xs:element name="Country" type="xs:string"/>
+                                    </xs:sequence>
+                                </xs:complexType>
+                            </xs:element>
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+                <xs:element name="ClaimantInformation">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element name="Claimant" maxOccurs="unbounded">
+                                <xs:complexType>
+                                    <xs:sequence>
+                                        <xs:element name="Name" type="xs:string"/>
+                                        <xs:element name="ContactInfo">
+                                            <xs:complexType>
+                                                <xs:sequence>
+                                                    <xs:element name="Phone" type="xs:string"/>
+                                                    <xs:element name="Email" type="xs:string" minOccurs="0"/>
+                                                </xs:sequence>
+                                            </xs:complexType>
+                                        </xs:element>
+                                        <xs:element name="ClaimAmount" type="xs:decimal"/>
+                                    </xs:sequence>
+                                    <xs:attribute name="id" type="xs:string" use="required"/>
+                                </xs:complexType>
+                            </xs:element>
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+                <xs:element name="CoverageInformation">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element name="Coverage" maxOccurs="unbounded">
+                                <xs:complexType>
+                                    <xs:sequence>
+                                        <xs:element name="CoverageType" type="xs:string"/>
+                                        <xs:element name="LimitAmount" type="xs:decimal"/>
+                                        <xs:element name="DeductibleAmount" type="xs:decimal"/>
+                                    </xs:sequence>
+                                    <xs:attribute name="id" type="xs:string" use="required"/>
+                                </xs:complexType>
+                            </xs:element>
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+            </xs:sequence>
+            <xs:attribute name="version" type="xs:string" use="required"/>
+        </xs:complexType>
+    </xs:element>
+</xs:schema> 

@@ -1,0 +1,2 @@
+ClaimNumber,PolicyNumber,InsuredName,LossDate,GlassRepairCost,GlassType,VendorInvoiceNumber,VehicleMake,VehicleModel,VehicleYear,CustomerPhone,DamageDescription
+SL7654331,PN1122344,James Lee,2024-03-20,289.99,Side Window,INV775554,Volkswagen,Jetta,2022,555-123-4577,"Clean break, passenger front window"

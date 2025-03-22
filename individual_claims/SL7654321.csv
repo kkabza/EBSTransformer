@@ -1,0 +1,2 @@
+ClaimNumber,PolicyNumber,InsuredName,LossDate,GlassRepairCost,GlassType,VendorInvoiceNumber,VehicleMake,VehicleModel,VehicleYear,CustomerPhone,DamageDescription
+SL7654321,PN1122334,Alex Johnson,2024-03-10,399.99,Windshield,INV775544,Toyota,Camry,2020,555-123-4567,"Rock impact damage, 4-inch crack at lower right corner"

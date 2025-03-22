@@ -1,0 +1,2 @@
+ClaimNumber,PolicyNumber,InsuredName,LossDate,GlassRepairCost,GlassType,VendorInvoiceNumber,VehicleMake,VehicleModel,VehicleYear,CustomerPhone,DamageDescription
+SL7654336,PN1122349,Mia Harris,2024-03-25,410.25,Windshield,INV775559,Chrysler,Pacifica,2017,555-123-4582,Windshield chip with 3 extending cracks

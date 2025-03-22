@@ -1,0 +1,30 @@
+<?xml version="1.0" ?>
+<Records>
+  <Record>
+    <ClaimNumber>SL1234567</ClaimNumber>
+    <PolicyNumber>PN9876543</PolicyNumber>
+    <InsuredName>John Doe</InsuredName>
+    <LossDate>2024-03-18</LossDate>
+    <GlassRepairCost>350.00</GlassRepairCost>
+    <GlassType>Windshield</GlassType>
+    <VendorInvoiceNumber>INV123456</VendorInvoiceNumber>
+  </Record>
+  <Record>
+    <ClaimNumber>SL1234568</ClaimNumber>
+    <PolicyNumber>PN9876544</PolicyNumber>
+    <InsuredName>Jane Smith</InsuredName>
+    <LossDate>2024-03-19</LossDate>
+    <GlassRepairCost>275.50</GlassRepairCost>
+    <GlassType>Side Window</GlassType>
+    <VendorInvoiceNumber>INV123457</VendorInvoiceNumber>
+  </Record>
+  <Record>
+    <ClaimNumber>SL1234569</ClaimNumber>
+    <PolicyNumber>PN9876545</PolicyNumber>
+    <InsuredName>Mike Brown</InsuredName>
+    <LossDate>2024-03-20</LossDate>
+    <GlassRepairCost>500.00</GlassRepairCost>
+    <GlassType>Rear Window</GlassType>
+    <VendorInvoiceNumber>INV123458 </VendorInvoiceNumber>
+  </Record>
+</Records>

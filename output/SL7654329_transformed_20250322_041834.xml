@@ -1,0 +1,17 @@
+<?xml version="1.0" ?>
+<Records>
+  <Record>
+    <ClaimNumber>SL7654329</ClaimNumber>
+    <PolicyNumber>PN1122342</PolicyNumber>
+    <InsuredName>Noah Garcia</InsuredName>
+    <LossDate>2024-03-18</LossDate>
+    <GlassRepairCost>515.75</GlassRepairCost>
+    <GlassType>Rear Window</GlassType>
+    <VendorInvoiceNumber>INV775552</VendorInvoiceNumber>
+    <VehicleMake>Kia</VehicleMake>
+    <VehicleModel>Sorento</VehicleModel>
+    <VehicleYear>2021</VehicleYear>
+    <CustomerPhone>555-123-4575</CustomerPhone>
+    <DamageDescription>Hail damage, multiple impacts</DamageDescription>
+  </Record>
+</Records>

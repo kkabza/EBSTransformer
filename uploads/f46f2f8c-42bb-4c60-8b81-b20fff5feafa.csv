@@ -1,0 +1,2 @@
+ClaimNumber,PolicyNumber,InsuredName,LossDate,GlassRepairCost,GlassType,VendorInvoiceNumber,VehicleMake,VehicleModel,VehicleYear,CustomerPhone,DamageDescription
+SL7654329,PN1122342,Noah Garcia,2024-03-18,515.75,Rear Window,INV775552,Kia,Sorento,2021,555-123-4575,"Hail damage, multiple impacts"

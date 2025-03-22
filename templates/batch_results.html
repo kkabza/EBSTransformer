@@ -1,0 +1,249 @@
+{% extends "base.html" %}
+
+{% block title %}ESB LLM Orchestrator | Batch Results{% endblock %}
+
+{% block head %}
+{{ super() }}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/comparison.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/charts.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="row">
+  <div class="col-12">
+    <div class="card rounded-4 w-100">
+      <div class="card-body">
+        <div class="d-flex align-items-start justify-content-between mb-4">
+          <div>
+            <h5 class="mb-0">Batch Processing Results</h5>
+            <p class="text-secondary mb-0">Summary of transformed files in this batch</p>
+          </div>
+          <div class="dropdown">
+            <a href="javascript:;" class="dropdown-toggle-nocaret options dropdown-toggle" data-bs-toggle="dropdown">
+              <i class="fas fa-ellipsis-v fs-5"></i>
+            </a>
+            <ul class="dropdown-menu">
+              <li><a class="dropdown-item" href="{{ url_for('index') }}">New Batch</a></li>
+              <li><a class="dropdown-item" href="{{ url_for('visualization') }}">View Dashboard</a></li>
+              <li><a class="dropdown-item" href="javascript:window.print()">Print Results</a></li>
+            </ul>
+          </div>
+        </div>
+        
+        <div class="row row-cols-1 row-cols-md-3 g-3 mb-4">
+          <div class="col">
+            <div class="p-3 border rounded-4 d-flex align-items-center justify-content-between">
+              <div>
+                <p class="mb-1 text-secondary">Files Processed</p>
+                <h4 class="mb-0">{{ total_files }}</h4>
+              </div>
+              <div class="widget-icon bg-primary bg-opacity-10 text-primary">
+                <i class="fas fa-file-alt"></i>
+              </div>
+            </div>
+          </div>
+          <div class="col">
+            <div class="p-3 border rounded-4 d-flex align-items-center justify-content-between">
+              <div>
+                <p class="mb-1 text-secondary">Total Processing Time</p>
+                <h4 class="mb-0">{{ "%.3f"|format(total_duration * 1000) }}ms</h4>
+              </div>
+              <div class="widget-icon bg-success bg-opacity-10 text-success">
+                <i class="fas fa-stopwatch"></i>
+              </div>
+            </div>
+          </div>
+          <div class="col">
+            <div class="p-3 border rounded-4 d-flex align-items-center justify-content-between">
+              <div>
+                <p class="mb-1 text-secondary">Average Processing Time</p>
+                <h4 class="mb-0">{{ "%.3f"|format(avg_duration * 1000) }}ms</h4>
+              </div>
+              <div class="widget-icon bg-info bg-opacity-10 text-info">
+                <i class="fas fa-tachometer-alt"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="card rounded-4 w-100 mt-4">
+  <div class="card-header">
+    <div class="d-flex align-items-center justify-content-between">
+      <h5 class="mb-0">Processed Files</h5>
+      <div class="d-flex gap-2">
+        <button class="btn btn-sm btn-primary rounded-4" id="new-batch-btn">
+          <i class="fas fa-plus"></i> Process New Files
+        </button>
+        <button class="btn btn-sm btn-secondary rounded-4" id="export-btn">
+          <i class="fas fa-download"></i> Export Results
+        </button>
+      </div>
+    </div>
+  </div>
+  <div class="card-body">
+    {% if results %}
+      <div class="table-responsive">
+        <table class="table table-hover">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Output Filename</th>
+              <th>Type</th>
+              <th>Processing Time</th>
+              <th>Date</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for result in results %}
+              <tr>
+                <td>{{ loop.index }}</td>
+                <td>{{ result.output_filename }}</td>
+                <td>
+                  <span class="badge bg-primary bg-opacity-10 text-primary">
+                    {{ result.source_type|upper }} → {{ result.result_type|upper }}
+                  </span>
+                </td>
+                <td>{{ "%.3f"|format(result.duration * 1000) }}ms</td>
+                <td>{{ result.processing_date }}</td>
+                <td>
+                  <div class="d-flex gap-2">
+                    <a href="{{ result.comparison_url }}" class="btn btn-sm btn-primary rounded-4">
+                      <i class="fas fa-eye"></i> View
+                    </a>
+                    <a href="{{ result.download_url }}" class="btn btn-sm btn-outline-secondary rounded-4">
+                      <i class="fas fa-download"></i> Download
+                    </a>
+                    {% if result.download_output_url %}
+                      <a href="{{ result.download_output_url }}" class="btn btn-sm btn-outline-success rounded-4">
+                        <i class="fas fa-file-export"></i> Output
+                      </a>
+                    {% endif %}
+                  </div>
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    {% else %}
+      <div class="alert alert-warning rounded-4">
+        <i class="fas fa-exclamation-triangle me-2"></i>
+        No files were successfully processed.
+      </div>
+    {% endif %}
+  </div>
+</div>
+
+<div class="d-flex justify-content-between mt-4 gap-3">
+  <a href="{{ url_for('index') }}" class="btn btn-primary rounded-4">
+    <i class="fas fa-arrow-left"></i> Return to Upload
+  </a>
+  <a href="{{ url_for('visualization') }}" class="btn btn-secondary rounded-4">
+    <i class="fas fa-chart-bar"></i> View Dashboard
+  </a>
+</div>
+
+<!-- Export data -->
+<script type="application/json" id="export-data">
+  {
+    "headers": ["ID", "Filename", "Type", "Processing Time (ms)", "Date"],
+    "rows": [
+      {% for result in results %}
+        {
+          "id": "{{ loop.index }}",
+          "filename": "{{ result.output_filename }}",
+          "type": "{{ result.source_type|upper }} → {{ result.result_type|upper }}",
+          "duration": "{{ "%.3f"|format(result.duration * 1000) }}",
+          "date": "{{ result.processing_date }}"
+        }{% if not loop.last %},{% endif %}
+      {% endfor %}
+    ]
+  }
+</script>
+{% endblock %}
+
+{% block footer %}
+<footer class="app-footer">
+  <div class="footer-content">
+    <div class="footer-logo">
+      <img src="{{ url_for('static', filename='images/msftlogo.png') }}" alt="Microsoft Logo" height="30">
+    </div>
+    <div class="footer-copyright">
+      &copy; {{ now.year|default(2023) }} Enterprise Service Bus - XML Transformation Service
+    </div>
+    <div class="footer-links">
+      <a href="/documentation">Documentation</a>
+      <a href="/about">About</a>
+    </div>
+  </div>
+</footer>
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Navigation button
+    const newBatchBtn = document.getElementById('new-batch-btn');
+    if (newBatchBtn) {
+      newBatchBtn.addEventListener('click', function() {
+        window.location.href = "{{ url_for('index') }}";
+      });
+    }
+    
+    // Export button functionality
+    const exportBtn = document.getElementById('export-btn');
+    if (exportBtn) {
+      exportBtn.addEventListener('click', function() {
+        // Get the pre-rendered data from the embedded JSON
+        let exportData;
+        try {
+          const dataElement = document.getElementById('export-data');
+          if (dataElement) {
+            exportData = JSON.parse(dataElement.textContent);
+          }
+        } catch (e) {
+          console.error('Error parsing export data:', e);
+          return;
+        }
+
+        if (!exportData || !exportData.rows || exportData.rows.length === 0) {
+          alert('No data available to export');
+          return;
+        }
+
+        // Create CSV content
+        let csvContent = "data:text/csv;charset=utf-8,";
+        
+        // Add headers
+        csvContent += exportData.headers.join(',') + '\n';
+        
+        // Add rows
+        exportData.rows.forEach(function(row) {
+          csvContent += [
+            row.id,
+            '"' + row.filename + '"',
+            '"' + row.type + '"',
+            row.duration,
+            '"' + row.date + '"'
+          ].join(',') + '\n';
+        });
+        
+        // Create download link and trigger download
+        const encodedUri = encodeURI(csvContent);
+        const link = document.createElement("a");
+        link.setAttribute("href", encodedUri);
+        link.setAttribute("download", "batch_results_export.csv");
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      });
+    }
+  });
+</script>
+{% endblock %} 

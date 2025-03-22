@@ -1,0 +1,2 @@
+ClaimNumber,PolicyNumber,InsuredName,LossDate,GlassRepairCost,GlassType,VendorInvoiceNumber,VehicleMake,VehicleModel,VehicleYear,CustomerPhone,DamageDescription
+SL7654335,PN1122348,Henry White,2024-03-24,530.00,Rear Window,INV775558,Tesla,Model 3,2022,555-123-4581,Complex fracture pattern from impact

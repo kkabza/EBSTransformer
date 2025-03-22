@@ -1,0 +1,2 @@
+ClaimNumber,PolicyNumber,InsuredName,LossDate,GlassRepairCost,GlassType,VendorInvoiceNumber,VehicleMake,VehicleModel,VehicleYear,CustomerPhone,DamageDescription
+SL7654349,PN1122362,Jackson Green,2024-04-07,295.50,Side Window,INV775572,Toyota,RAV4,2019,555-123-4595,Single break requiring full replacement

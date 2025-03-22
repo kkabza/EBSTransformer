@@ -1,0 +1,17 @@
+<?xml version="1.0" ?>
+<Records>
+  <Record>
+    <ClaimNumber>SL7654341</ClaimNumber>
+    <PolicyNumber>PN1122354</PolicyNumber>
+    <InsuredName>Daniel Lewis</InsuredName>
+    <LossDate>2024-03-30</LossDate>
+    <GlassRepairCost>545.50</GlassRepairCost>
+    <GlassType>Rear Window</GlassType>
+    <VendorInvoiceNumber>INV775564</VendorInvoiceNumber>
+    <VehicleMake>Acura</VehicleMake>
+    <VehicleModel>MDX</VehicleModel>
+    <VehicleYear>2019</VehicleYear>
+    <CustomerPhone>555-123-4587</CustomerPhone>
+    <DamageDescription>Multiple point impacts requiring replacement</DamageDescription>
+  </Record>
+</Records>

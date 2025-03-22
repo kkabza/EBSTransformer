@@ -1,0 +1,17 @@
+<?xml version="1.0" ?>
+<Records>
+  <Record>
+    <ClaimNumber>SL7654331</ClaimNumber>
+    <PolicyNumber>PN1122344</PolicyNumber>
+    <InsuredName>James Lee</InsuredName>
+    <LossDate>2024-03-20</LossDate>
+    <GlassRepairCost>289.99</GlassRepairCost>
+    <GlassType>Side Window</GlassType>
+    <VendorInvoiceNumber>INV775554</VendorInvoiceNumber>
+    <VehicleMake>Volkswagen</VehicleMake>
+    <VehicleModel>Jetta</VehicleModel>
+    <VehicleYear>2022</VehicleYear>
+    <CustomerPhone>555-123-4577</CustomerPhone>
+    <DamageDescription>Clean break, passenger front window</DamageDescription>
+  </Record>
+</Records>

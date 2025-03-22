@@ -1,0 +1,425 @@
+{% extends "base.html" %}
+
+{% block title %}Transformation Explorer{% endblock %}
+
+{% block page_title %}
+<div class="d-flex align-items-center">
+  <div>
+    <i class="material-icons-outlined align-middle me-2 fs-2">visibility</i>
+  </div>
+  <div>
+    <h3 class="mb-0">Transformation Explorer</h3>
+    <p class="text-secondary mb-0">View and analyze your transformation data files</p>
+  </div>
+</div>
+{% endblock %}
+
+{% block content %}
+<!-- File Selector Section -->
+<div class="esb-accordion-item active">
+  <div class="esb-accordion-header">
+    <h5><i class="material-icons-outlined me-2">folder</i>File Selection</h5>
+    <i class="material-icons-outlined esb-accordion-icon">expand_more</i>
+  </div>
+  <div class="esb-accordion-body">
+    <div class="card rounded-4 w-100">
+      <div class="card-body">
+        <div class="row g-3">
+          <div class="col-md-6">
+            <label for="file-type" class="form-label">File Category</label>
+            <select class="form-select" id="file-type">
+              <option value="input">Input Files</option>
+              <option value="output">Output Files</option>
+              <option value="temp">Temporary Files</option>
+              <option value="logs">Log Files</option>
+            </select>
+          </div>
+          <div class="col-md-6">
+            <label for="file-format" class="form-label">File Format</label>
+            <select class="form-select" id="file-format">
+              <option value="all">All Formats</option>
+              <option value="xml">XML</option>
+              <option value="json">JSON</option>
+              <option value="csv">CSV</option>
+              <option value="log">LOG</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- File List Section -->
+<div class="esb-accordion-item active">
+  <div class="esb-accordion-header">
+    <h5><i class="material-icons-outlined me-2">list</i>Available Files</h5>
+    <i class="material-icons-outlined esb-accordion-icon">expand_more</i>
+  </div>
+  <div class="esb-accordion-body">
+    <div class="card rounded-4 w-100">
+      <div class="card-body">
+        <div class="table-responsive">
+          <table class="table table-hover">
+            <thead>
+              <tr>
+                <th>Filename</th>
+                <th>Type</th>
+                <th>Size</th>
+                <th>Date</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="file-list">
+              {% for file in files %}
+              <tr class="file-item" data-file="{{ file.path }}" data-type="{{ file.type }}">
+                <td>{{ file.name }}</td>
+                <td><span class="badge rounded-pill bg-{{ file.type_class }}">{{ file.type }}</span></td>
+                <td>{{ file.size }}</td>
+                <td>{{ file.date }}</td>
+                <td>
+                  <div class="btn-group">
+                    <button class="btn btn-sm btn-primary rounded-3 view-file" data-file="{{ file.path }}">
+                      <i class="material-icons-outlined align-middle">visibility</i>
+                    </button>
+                    <button class="btn btn-sm btn-light rounded-3 download-file" data-file="{{ file.path }}">
+                      <i class="material-icons-outlined align-middle">download</i>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- File Viewer Section -->
+<div class="esb-accordion-item active">
+  <div class="esb-accordion-header">
+    <h5><i class="material-icons-outlined me-2">description</i>File Viewer</h5>
+    <i class="material-icons-outlined esb-accordion-icon">expand_more</i>
+  </div>
+  <div class="esb-accordion-body">
+    <div class="card rounded-4 w-100">
+      <div class="card-header">
+        <div class="d-flex align-items-center justify-content-between">
+          <h5 class="mb-0" id="viewer-title"><i class="material-icons-outlined align-middle me-2">code</i>File Content</h5>
+          <div class="viewer-controls">
+            <button class="btn btn-sm btn-light rounded-3" id="btn-wrap">
+              <i class="material-icons-outlined align-middle">wrap_text</i> Toggle Wrap
+            </button>
+            <button class="btn btn-sm btn-light rounded-3" id="btn-format">
+              <i class="material-icons-outlined align-middle">format_align_left</i> Format
+            </button>
+            <button class="btn btn-sm btn-light rounded-3" id="btn-copy">
+              <i class="material-icons-outlined align-middle">content_copy</i> Copy
+            </button>
+            <button class="btn btn-sm btn-primary rounded-3" id="btn-download">
+              <i class="material-icons-outlined align-middle">download</i> Download
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="card-body p-0">
+        <div id="file-content-wrapper" class="position-relative">
+          <div id="file-content-loading" class="position-absolute w-100 h-100 d-flex align-items-center justify-content-center" style="display: none !important;">
+            <div class="spinner-border text-primary" role="status">
+              <span class="visually-hidden">Loading...</span>
+            </div>
+          </div>
+          <pre id="file-content" class="m-0 p-3">Select a file to view its contents</pre>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- File Analysis Section -->
+<div class="esb-accordion-item">
+  <div class="esb-accordion-header">
+    <h5><i class="material-icons-outlined me-2">analytics</i>File Analysis</h5>
+    <i class="material-icons-outlined esb-accordion-icon">expand_more</i>
+  </div>
+  <div class="esb-accordion-body">
+    <div class="card rounded-4 w-100">
+      <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="mb-0"><i class="material-icons-outlined align-middle me-2">analytics</i>Structure Analysis</h5>
+        <button class="btn btn-sm btn-primary rounded-3" id="btn-analyze" disabled>
+          <i class="material-icons-outlined align-middle">auto_fix_high</i> Analyze
+        </button>
+      </div>
+      <div class="card-body">
+        <div id="analysis-result">
+          <p class="text-secondary text-center py-5">Select a file and click "Analyze" to view its structure</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // File selection functionality
+    const fileTypeSelect = document.getElementById('file-type');
+    const fileFormatSelect = document.getElementById('file-format');
+    const fileList = document.getElementById('file-list');
+    const fileItems = document.querySelectorAll('.file-item');
+    const viewerTitle = document.getElementById('viewer-title');
+    const fileContent = document.getElementById('file-content');
+    const loadingIndicator = document.getElementById('file-content-loading');
+    const btnAnalyze = document.getElementById('btn-analyze');
+    const analysisResult = document.getElementById('analysis-result');
+    
+    // Filter files when selections change
+    fileTypeSelect.addEventListener('change', filterFiles);
+    fileFormatSelect.addEventListener('change', filterFiles);
+    
+    function filterFiles() {
+      const selectedType = fileTypeSelect.value;
+      const selectedFormat = fileFormatSelect.value;
+      
+      fileItems.forEach(item => {
+        const fileType = item.getAttribute('data-type');
+        const filePath = item.getAttribute('data-file');
+        const fileExt = filePath.split('.').pop();
+        
+        let show = true;
+        
+        if (selectedType !== 'all' && !fileType.includes(selectedType)) {
+          show = false;
+        }
+        
+        if (selectedFormat !== 'all' && fileExt !== selectedFormat) {
+          show = false;
+        }
+        
+        item.style.display = show ? '' : 'none';
+      });
+    }
+    
+    // View file content
+    document.querySelectorAll('.view-file').forEach(button => {
+      button.addEventListener('click', function() {
+        const filePath = this.getAttribute('data-file');
+        const fileName = filePath.split('/').pop();
+        
+        viewerTitle.innerHTML = `<i class="material-icons-outlined align-middle me-2">code</i>${fileName}`;
+        fileContent.textContent = 'Loading...';
+        loadingIndicator.style.display = 'flex';
+        
+        // Simulate loading the file content
+        setTimeout(() => {
+          fetch(`/api/file?path=${filePath}`)
+            .then(response => response.text())
+            .then(data => {
+              fileContent.textContent = data;
+              loadingIndicator.style.display = 'none';
+              btnAnalyze.disabled = false;
+            })
+            .catch(error => {
+              fileContent.textContent = `Error loading file: ${error.message}`;
+              loadingIndicator.style.display = 'none';
+              btnAnalyze.disabled = true;
+            });
+        }, 500);
+      });
+    });
+    
+    // File content controls
+    document.getElementById('btn-wrap').addEventListener('click', function() {
+      fileContent.classList.toggle('text-wrap');
+    });
+    
+    document.getElementById('btn-format').addEventListener('click', function() {
+      try {
+        const content = fileContent.textContent;
+        const fileType = viewerTitle.textContent.split('.').pop();
+        
+        if (fileType === 'json') {
+          const formatted = JSON.stringify(JSON.parse(content), null, 2);
+          fileContent.textContent = formatted;
+        } else if (fileType === 'xml') {
+          // Simple XML formatting - would use a proper library in production
+          fileContent.textContent = formatXML(content);
+        }
+      } catch (error) {
+        alert(`Could not format file: ${error.message}`);
+      }
+    });
+    
+    document.getElementById('btn-copy').addEventListener('click', function() {
+      navigator.clipboard.writeText(fileContent.textContent)
+        .then(() => {
+          this.innerHTML = '<i class="material-icons-outlined align-middle">check</i> Copied';
+          setTimeout(() => {
+            this.innerHTML = '<i class="material-icons-outlined align-middle">content_copy</i> Copy';
+          }, 1500);
+        })
+        .catch(err => {
+          console.error('Could not copy text: ', err);
+        });
+    });
+    
+    // Analyze button
+    btnAnalyze.addEventListener('click', function() {
+      const fileName = viewerTitle.textContent.trim();
+      const fileData = fileContent.textContent;
+      const fileType = fileName.split('.').pop();
+      
+      analysisResult.innerHTML = '<div class="text-center py-3"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div></div>';
+      
+      // Simulate analysis - in a real app this would be a server call
+      setTimeout(() => {
+        if (fileType === 'json') {
+          try {
+            const jsonData = JSON.parse(fileData);
+            analysisResult.innerHTML = generateJsonAnalysis(jsonData);
+          } catch(e) {
+            analysisResult.innerHTML = `<div class="alert alert-danger">Error analyzing JSON: ${e.message}</div>`;
+          }
+        } else if (fileType === 'xml') {
+          analysisResult.innerHTML = '<div class="alert alert-info">XML analysis would be performed on the server</div>';
+        } else if (fileType === 'csv') {
+          analysisResult.innerHTML = '<div class="alert alert-info">CSV analysis would be performed on the server</div>';
+        } else {
+          analysisResult.innerHTML = '<div class="alert alert-warning">Analysis not available for this file type</div>';
+        }
+      }, 1000);
+    });
+    
+    // Helper functions
+    function formatXML(xml) {
+      // Simple XML formatter - not production quality
+      let formatted = '';
+      let indent = '';
+      
+      xml.split(/>\s*</).forEach(function(node) {
+        if (node.match( /^\/\w/ )) indent = indent.substring(2);
+        formatted += indent + '<' + node + '>\n';
+        if (node.match( /^<?\w[^>]*[^\/]$/ )) indent += '  ';
+      });
+      
+      return formatted.substring(1, formatted.length-3);
+    }
+    
+    function generateJsonAnalysis(json) {
+      const countKeysAtDepth = (obj, depth = 0, result = {}) => {
+        if (depth in result) {
+          result[depth]++;
+        } else {
+          result[depth] = 1;
+        }
+        
+        if (typeof obj === 'object' && obj !== null) {
+          for (const key in obj) {
+            countKeysAtDepth(obj[key], depth + 1, result);
+          }
+        }
+        
+        return result;
+      };
+      
+      const keyCount = countKeysAtDepth(json);
+      const maxDepth = Math.max(...Object.keys(keyCount).map(Number));
+      const totalNodes = Object.values(keyCount).reduce((a, b) => a + b, 0);
+      
+      // Find data types
+      const types = {};
+      const countTypes = (obj) => {
+        const type = Array.isArray(obj) ? 'array' : typeof obj;
+        types[type] = (types[type] || 0) + 1;
+        
+        if (type === 'object' && obj !== null) {
+          for (const key in obj) {
+            countTypes(obj[key]);
+          }
+        } else if (type === 'array') {
+          for (const item of obj) {
+            countTypes(item);
+          }
+        }
+      };
+      
+      countTypes(json);
+      
+      return `
+        <div class="analysis-summary">
+          <div class="row g-3">
+            <div class="col-md-3">
+              <div class="p-3 border rounded-4">
+                <h6>Total Nodes</h6>
+                <p class="fw-bold mb-0">${totalNodes}</p>
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div class="p-3 border rounded-4">
+                <h6>Nesting Depth</h6>
+                <p class="fw-bold mb-0">${maxDepth}</p>
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div class="p-3 border rounded-4">
+                <h6>Top-Level Keys</h6>
+                <p class="fw-bold mb-0">${Object.keys(json).length}</p>
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div class="p-3 border rounded-4">
+                <h6>Data Types</h6>
+                <p class="fw-bold mb-0">${Object.keys(types).length}</p>
+              </div>
+            </div>
+          </div>
+          
+          <h6 class="mt-4">Structure Breakdown</h6>
+          <div class="table-responsive">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Level</th>
+                  <th>Nodes</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${Object.entries(keyCount).map(([depth, count]) => `
+                  <tr>
+                    <td>Level ${depth}</td>
+                    <td>${count}</td>
+                  </tr>
+                `).join('')}
+              </tbody>
+            </table>
+          </div>
+          
+          <h6 class="mt-4">Data Types</h6>
+          <div class="table-responsive">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Type</th>
+                  <th>Count</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${Object.entries(types).map(([type, count]) => `
+                  <tr>
+                    <td>${type}</td>
+                    <td>${count}</td>
+                  </tr>
+                `).join('')}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      `;
+    }
+  });
+</script>
+{% endblock %} 

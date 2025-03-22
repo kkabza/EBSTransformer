@@ -1,0 +1,2 @@
+ClaimNumber,PolicyNumber,InsuredName,LossDate,GlassRepairCost,GlassType,VendorInvoiceNumber,VehicleMake,VehicleModel,VehicleYear,CustomerPhone,DamageDescription
+SL7654361,PN1122374,Eli Parker,2024-04-19,285.50,Side Window,INV775584,Tesla,Model Y,2020,555-123-4607,Clean break requiring replacement

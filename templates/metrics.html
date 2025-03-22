@@ -1,0 +1,712 @@
+{% extends "base.html" %}
+
+{% block title %}ESB LLM Orchestrator | Dashboard{% endblock %}
+
+{% block page_title %}Performance Dashboard{% endblock %}
+
+{% block head %}
+{{ super() }}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/charts.css') }}">
+{% endblock %}
+
+{% block content %}
+<!-- Stats Overview -->
+<div class="esb-accordion-item active fixed-accordion">
+    <div class="esb-accordion-header">
+        <h5><i class="material-icons-outlined me-2">insights</i>Key Performance Metrics</h5>
+        <i class="material-icons-outlined esb-accordion-icon">expand_more</i>
+    </div>
+    <div class="esb-accordion-body">
+        <div class="stats-grid">
+            <div class="stat-card rounded-4">
+                <div class="mb-3 d-flex align-items-center justify-content-between">
+                    <div class="wh-42 d-flex align-items-center justify-content-center rounded-circle bg-primary bg-opacity-10 text-primary">
+                        <i class="fas fa-exchange-alt fs-5"></i>
+                    </div>
+                    <div>
+                        <span class="text-success d-flex align-items-center">+1.2%<i class="fas fa-arrow-up"></i></span>
+                    </div>
+                </div>
+                <div>
+                    <h4 class="mb-0">{{ metrics.count }}</h4>
+                    <p class="mb-0">Total Transformations</p>
+                </div>
+            </div>
+            <div class="stat-card rounded-4">
+                <div class="mb-3 d-flex align-items-center justify-content-between">
+                    <div class="wh-42 d-flex align-items-center justify-content-center rounded-circle bg-success bg-opacity-10 text-success">
+                        <i class="fas fa-check-circle fs-5"></i>
+                    </div>
+                    <div>
+                        <span class="text-success d-flex align-items-center">+1.2%<i class="fas fa-arrow-up"></i></span>
+                    </div>
+                </div>
+                <div>
+                    <h4 class="mb-0">{{ "%.1f" % metrics.success_rate }}%</h4>
+                    <p class="mb-0">Success Rate</p>
+                </div>
+            </div>
+            <div class="stat-card rounded-4">
+                <div class="mb-3 d-flex align-items-center justify-content-between">
+                    <div class="wh-42 d-flex align-items-center justify-content-center rounded-circle bg-info bg-opacity-10 text-info">
+                        <i class="fas fa-clock fs-5"></i>
+                    </div>
+                    <div>
+                        <span class="text-success d-flex align-items-center">-0.3ms<i class="fas fa-arrow-down"></i></span>
+                    </div>
+                </div>
+                <div>
+                    <h4 class="mb-0">{{ "%.2f" % (metrics.avg_duration * 1000) }}ms</h4>
+                    <p class="mb-0">Avg Processing</p>
+                </div>
+            </div>
+            <div class="stat-card rounded-4">
+                <div class="mb-3 d-flex align-items-center justify-content-between">
+                    <div class="wh-42 d-flex align-items-center justify-content-center rounded-circle bg-warning bg-opacity-10 text-warning">
+                        <i class="fas fa-calendar-day fs-5"></i>
+                    </div>
+                    <div>
+                        <span class="text-muted">Today</span>
+                    </div>
+                </div>
+                <div>
+                    <h4 class="mb-0">{{ metrics.today_count }}</h4>
+                    <p class="mb-0">Today's Transforms</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Charts Section -->
+<div class="esb-accordion-item active">
+    <div class="esb-accordion-header">
+        <h5><i class="material-icons-outlined me-2">bar_chart</i>Performance Trends</h5>
+        <i class="material-icons-outlined esb-accordion-icon">expand_more</i>
+    </div>
+    <div class="esb-accordion-body">
+        <div class="row">
+            <div class="col-12 col-xl-8">
+                <div class="card rounded-4 w-100 mb-4">
+                    <div class="card-body">
+                        <div class="d-flex align-items-start justify-content-between mb-3">
+                            <div>
+                                <h5 class="mb-0"><i class="fas fa-chart-line me-2"></i>Processing Time Trends</h5>
+                            </div>
+                            <div class="dropdown">
+                                <a href="javascript:;" class="dropdown-toggle-nocaret options dropdown-toggle" data-bs-toggle="dropdown">
+                                    <i class="fas fa-ellipsis-v fs-5"></i>
+                                </a>
+                                <ul class="dropdown-menu">
+                                    <li><a class="dropdown-item" href="javascript:;" id="refresh-chart1"><i class="fas fa-sync me-2"></i>Refresh</a></li>
+                                    <li><a class="dropdown-item" href="javascript:;" id="download-chart1"><i class="fas fa-download me-2"></i>Export</a></li>
+                                    <li><a class="dropdown-item" href="javascript:;">Last 7 days</a></li>
+                                    <li><a class="dropdown-item" href="javascript:;">Last 30 days</a></li>
+                                    <li><a class="dropdown-item" href="javascript:;">Last 90 days</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div id="processing-time-chart" style="height: 320px;"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-xl-4">
+                <div class="card rounded-4 w-100 mb-4">
+                    <div class="card-body">
+                        <div class="d-flex align-items-start justify-content-between mb-3">
+                            <div>
+                                <h5 class="mb-0"><i class="fas fa-chart-pie me-2"></i>Transformation Types</h5>
+                            </div>
+                            <div class="dropdown">
+                                <a href="javascript:;" class="dropdown-toggle-nocaret options dropdown-toggle" data-bs-toggle="dropdown">
+                                    <i class="fas fa-ellipsis-v fs-5"></i>
+                                </a>
+                                <ul class="dropdown-menu">
+                                    <li><a class="dropdown-item" href="javascript:;" id="refresh-chart2"><i class="fas fa-sync me-2"></i>Refresh</a></li>
+                                    <li><a class="dropdown-item" href="javascript:;" id="download-chart2"><i class="fas fa-download me-2"></i>Export</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div id="transformation-types-chart" style="height: 320px;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Performance Statistics -->
+<div class="esb-accordion-item">
+    <div class="esb-accordion-header">
+        <h5><i class="material-icons-outlined me-2">speed</i>Performance Statistics</h5>
+        <i class="material-icons-outlined esb-accordion-icon">expand_more</i>
+    </div>
+    <div class="esb-accordion-body">
+        <div class="row row-cols-1 row-cols-md-2 row-cols-xl-4 g-3">
+            <div class="col">
+                <div class="p-3 border rounded-4 d-flex align-items-center justify-content-between">
+                    <div>
+                        <p class="mb-1 text-secondary">Fastest Transform</p>
+                        <h4 class="mb-0">{{ "%.2f" % (metrics.min_duration * 1000) }}ms</h4>
+                    </div>
+                    <div class="widget-icon bg-primary bg-opacity-10 text-primary">
+                        <i class="fas fa-bolt"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="col">
+                <div class="p-3 border rounded-4 d-flex align-items-center justify-content-between">
+                    <div>
+                        <p class="mb-1 text-secondary">Slowest Transform</p>
+                        <h4 class="mb-0">{{ "%.2f" % (metrics.max_duration * 1000) }}ms</h4>
+                    </div>
+                    <div class="widget-icon bg-danger bg-opacity-10 text-danger">
+                        <i class="fas fa-hourglass-end"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="col">
+                <div class="p-3 border rounded-4 d-flex align-items-center justify-content-between">
+                    <div>
+                        <p class="mb-1 text-secondary">Avg Input Size</p>
+                        <h4 class="mb-0">{{ "%.0f" % metrics.avg_input_size }} chars</h4>
+                    </div>
+                    <div class="widget-icon bg-info bg-opacity-10 text-info">
+                        <i class="fas fa-file-import"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="col">
+                <div class="p-3 border rounded-4 d-flex align-items-center justify-content-between">
+                    <div>
+                        <p class="mb-1 text-secondary">Avg Output Size</p>
+                        <h4 class="mb-0">{{ "%.0f" % metrics.avg_output_size }} chars</h4>
+                    </div>
+                    <div class="widget-icon bg-success bg-opacity-10 text-success">
+                        <i class="fas fa-file-export"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Recent Transformations -->
+<div class="esb-accordion-item active">
+    <div class="esb-accordion-header">
+        <h5><i class="material-icons-outlined me-2">history</i>Recent Transformations</h5>
+        <i class="material-icons-outlined esb-accordion-icon">expand_more</i>
+    </div>
+    <div class="esb-accordion-body">
+        <div class="mb-3 d-flex justify-content-end">
+            <button class="btn btn-sm btn-primary rounded-3 me-2" id="refresh-btn">
+                <i class="fas fa-sync-alt me-1"></i> Refresh
+            </button>
+            <button class="btn btn-sm btn-outline-secondary rounded-3">
+                <i class="fas fa-download me-1"></i> Export
+            </button>
+        </div>
+        {% if transformations %}
+        <div class="table-responsive">
+            <table class="table mb-0 align-middle">
+                <thead class="table-light">
+                    <tr>
+                        <th>ID</th>
+                        <th>File Type</th>
+                        <th>Status</th>
+                        <th>Time</th>
+                        <th>Duration</th>
+                        <th>Size</th>
+                        <th class="text-center">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for id, transform in transformations %}
+                    <tr>
+                        <td><span class="badge bg-dark">{{ id[:8] }}</span></td>
+                        <td>
+                            {% if transform.file_type == 'xml' %}
+                            <span class="badge bg-primary text-white">XML</span>
+                            {% elif transform.file_type == 'json' %}
+                            <span class="badge bg-success text-white">JSON</span>
+                            {% elif transform.file_type == 'csv' %}
+                            <span class="badge bg-info text-white">CSV</span>
+                            {% else %}
+                            <span class="badge bg-secondary text-white">{{ transform.file_type }}</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if transform.status == 'completed' %}
+                            <span class="status-badge status-completed"><i class="fas fa-check-circle me-1"></i>Completed</span>
+                            {% elif transform.status == 'error' %}
+                            <span class="status-badge status-failed"><i class="fas fa-times-circle me-1"></i>Error</span>
+                            {% else %}
+                            <span class="status-badge status-processing"><i class="fas fa-spinner me-1"></i>{{ transform.status }}</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ transform.formatted_time }}</td>
+                        <td>
+                            {% if transform.duration is defined %}
+                            <span class="fw-bold">{{ "%.2f" % (transform.duration * 1000) }}</span> ms
+                            {% else %}
+                            N/A
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if transform.output_size is defined %}
+                            <span class="fw-bold">{{ transform.output_size }}</span> chars
+                            {% else %}
+                            N/A
+                            {% endif %}
+                        </td>
+                        <td class="text-center">
+                            <div class="d-flex justify-content-center gap-2">
+                                <a href="{{ url_for('comparison_view', result_id=id) }}" class="btn btn-sm btn-outline-primary rounded-pill px-3" title="View Result">
+                                    <i class="fas fa-eye me-1"></i> View
+                                </a>
+                                <a href="{{ url_for('download_result', result_id=id) }}" class="btn btn-sm btn-outline-secondary rounded-pill px-3" title="Download">
+                                    <i class="fas fa-download me-1"></i> Download
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="text-center py-5">
+            <div class="mb-3">
+                <i class="fas fa-chart-line fa-4x text-secondary opacity-50"></i>
+            </div>
+            <h4>No transformations yet</h4>
+            <p class="text-secondary">Start by uploading files on the home page</p>
+            <a href="/" class="btn btn-primary rounded-3 mt-2">
+                <i class="fas fa-upload me-2"></i> Upload Files
+            </a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Error Distribution -->
+<div class="esb-accordion-item">
+    <div class="esb-accordion-header">
+        <h5><i class="material-icons-outlined me-2">error_outline</i>Error Distribution</h5>
+        <i class="material-icons-outlined esb-accordion-icon">expand_more</i>
+    </div>
+    <div class="esb-accordion-body">
+        <div class="mb-3 d-flex justify-content-end">
+            <div class="dropdown">
+                <a href="javascript:;" class="dropdown-toggle-nocaret options dropdown-toggle" data-bs-toggle="dropdown">
+                    <i class="fas fa-ellipsis-v"></i>
+                </a>
+                <ul class="dropdown-menu">
+                    <li><a class="dropdown-item" href="javascript:;" id="refresh-chart3"><i class="fas fa-sync me-2"></i>Refresh</a></li>
+                    <li><a class="dropdown-item" href="javascript:;" id="download-chart3"><i class="fas fa-download me-2"></i>Export</a></li>
+                    <li><a class="dropdown-item" href="javascript:;">Filter by Type</a></li>
+                </ul>
+            </div>
+        </div>
+        <div id="error-types-chart" style="height: 320px;"></div>
+    </div>
+</div>
+{% endblock %}
+
+{% block footer %}
+<footer class="app-footer">
+    <div class="footer-content">
+        <div class="footer-logo">
+            <img src="{{ url_for('static', filename='images/msftlogo.png') }}" alt="Microsoft Logo" height="30">
+        </div>
+        <div class="footer-copyright">
+            &copy; {{ now.year }} Enterprise Service Bus - XML Transformation Service
+        </div>
+        <div class="footer-links">
+            <a href="/documentation">Documentation</a>
+            <a href="/about">About</a>
+        </div>
+    </div>
+</footer>
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+<script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize charts
+    initCharts();
+    
+    // Setup refresh button behavior
+    document.getElementById('refresh-btn').addEventListener('click', function() {
+        fetchChartData();
+    });
+    
+    // Fetch data immediately on page load
+    fetchChartData();
+    
+    // Fetch data every 60 seconds
+    setInterval(fetchChartData, 60000);
+    
+    // Chart refresh handlers
+    document.getElementById('refresh-chart1').addEventListener('click', function() {
+        showLoading(['processing-time-chart']);
+        fetchChartData();
+    });
+    
+    document.getElementById('refresh-chart2').addEventListener('click', function() {
+        showLoading(['transformation-types-chart']);
+        fetchChartData();
+    });
+    
+    document.getElementById('refresh-chart3').addEventListener('click', function() {
+        showLoading(['error-types-chart']);
+        fetchChartData();
+    });
+    
+    document.getElementById('download-chart1').addEventListener('click', function() {
+        if (processingTimeChart) {
+            processingTimeChart.exportToSVG();
+        }
+    });
+    
+    document.getElementById('download-chart2').addEventListener('click', function() {
+        if (transformationTypesChart) {
+            transformationTypesChart.exportToSVG();
+        }
+    });
+    
+    document.getElementById('download-chart3').addEventListener('click', function() {
+        if (errorTypesChart) {
+            errorTypesChart.exportToSVG();
+        }
+    });
+});
+
+// Chart instances
+let processingTimeChart;
+let transformationTypesChart;
+let errorTypesChart;
+
+function initCharts() {
+    // Processing Time Chart options
+    const timeChartOptions = {
+        series: [{
+            name: 'Avg Processing Time (s)',
+            data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] // Will be populated from API
+        }],
+        chart: {
+            height: 320,
+            type: 'area',
+            toolbar: {
+                show: false
+            },
+            fontFamily: 'inherit',
+            foreColor: 'rgba(255, 255, 255, 0.65)'
+        },
+        colors: ['#4BBEB3'],
+        dataLabels: {
+            enabled: false
+        },
+        stroke: {
+            curve: 'smooth',
+            width: 3
+        },
+        fill: {
+            type: 'gradient',
+            gradient: {
+                shade: 'dark',
+                gradientToColors: ['#4BBEB3'],
+                shadeIntensity: 1,
+                type: 'vertical',
+                opacityFrom: 0.7,
+                opacityTo: 0.1,
+            }
+        },
+        grid: {
+            borderColor: 'rgba(255, 255, 255, 0.1)',
+            row: {
+                colors: ['transparent'],
+                opacity: 0.5
+            }
+        },
+        xaxis: {
+            categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+            labels: {
+                style: {
+                    colors: 'rgba(255, 255, 255, 0.65)'
+                }
+            }
+        },
+        yaxis: {
+            labels: {
+                formatter: function(val) {
+                    return val.toFixed(2) + 's';
+                },
+                style: {
+                    colors: 'rgba(255, 255, 255, 0.65)'
+                }
+            }
+        },
+        tooltip: {
+            theme: 'dark',
+            y: {
+                formatter: function(val) {
+                    return val.toFixed(2) + 's';
+                }
+            }
+        },
+        noData: {
+            text: 'Loading data...',
+            align: 'center',
+            verticalAlign: 'middle',
+            offsetX: 0,
+            offsetY: 0,
+            style: {
+                color: '#fff',
+                fontSize: '16px',
+                fontFamily: 'inherit'
+            }
+        }
+    };
+
+    // Transformation Types Chart options
+    const typesChartOptions = {
+        series: [0, 0, 0], // Will be populated from API
+        chart: {
+            height: 320,
+            type: 'donut',
+            fontFamily: 'inherit',
+            foreColor: 'rgba(255, 255, 255, 0.65)'
+        },
+        labels: ['XML to XML', 'JSON to XML', 'CSV to XML'],
+        colors: ['#4BBEB3', '#6571FF', '#FFC107'],
+        legend: {
+            position: 'bottom',
+            horizontalAlign: 'center',
+            fontSize: '14px',
+            labels: {
+                colors: 'rgba(255, 255, 255, 0.65)'
+            }
+        },
+        plotOptions: {
+            pie: {
+                donut: {
+                    size: '75%',
+                    background: 'transparent',
+                    labels: {
+                        show: true,
+                        name: {
+                            show: true,
+                            fontSize: '22px',
+                            fontFamily: 'inherit',
+                            color: 'rgba(255, 255, 255, 0.85)'
+                        },
+                        value: {
+                            show: true,
+                            fontSize: '16px',
+                            fontFamily: 'inherit',
+                            color: 'rgba(255, 255, 255, 0.85)',
+                            formatter: function (val) {
+                                return val;
+                            }
+                        },
+                        total: {
+                            show: true,
+                            showAlways: false,
+                            label: 'Total',
+                            fontSize: '14px',
+                            fontFamily: 'inherit',
+                            color: 'rgba(255, 255, 255, 0.85)'
+                        }
+                    }
+                }
+            }
+        },
+        dataLabels: {
+            enabled: false
+        },
+        tooltip: {
+            theme: 'dark'
+        },
+        responsive: [{
+            breakpoint: 480,
+            options: {
+                chart: {
+                    height: 300
+                },
+                legend: {
+                    position: 'bottom'
+                }
+            }
+        }],
+        noData: {
+            text: 'Loading data...',
+            align: 'center',
+            verticalAlign: 'middle',
+            offsetX: 0,
+            offsetY: 0,
+            style: {
+                color: '#fff',
+                fontSize: '16px',
+                fontFamily: 'inherit'
+            }
+        }
+    };
+
+    // Error Types Chart options
+    const errorChartOptions = {
+        series: [{
+            name: 'Error Count',
+            data: [0, 0, 0, 0, 0] // Will be populated from API
+        }],
+        chart: {
+            height: 320,
+            type: 'bar',
+            toolbar: {
+                show: false
+            },
+            fontFamily: 'inherit',
+            foreColor: 'rgba(255, 255, 255, 0.65)'
+        },
+        colors: ['#FF6B6B'],
+        plotOptions: {
+            bar: {
+                borderRadius: 4,
+                horizontal: true,
+                distributed: true,
+                dataLabels: {
+                    position: 'top'
+                }
+            }
+        },
+        dataLabels: {
+            enabled: true,
+            offsetX: -6,
+            style: {
+                fontSize: '12px',
+                colors: ['rgba(255, 255, 255, 0.85)']
+            }
+        },
+        grid: {
+            borderColor: 'rgba(255, 255, 255, 0.1)',
+            padding: {
+                left: 10,
+                right: 10
+            }
+        },
+        xaxis: {
+            categories: ['Schema Validation', 'Format Error', 'Missing Fields', 'Syntax Error', 'Other'],
+            labels: {
+                style: {
+                    colors: 'rgba(255, 255, 255, 0.65)'
+                }
+            }
+        },
+        tooltip: {
+            theme: 'dark'
+        },
+        noData: {
+            text: 'Loading data...',
+            align: 'center',
+            verticalAlign: 'middle',
+            offsetX: 0,
+            offsetY: 0,
+            style: {
+                color: '#fff',
+                fontSize: '16px',
+                fontFamily: 'inherit'
+            }
+        }
+    };
+
+    // Initialize Charts
+    processingTimeChart = new ApexCharts(document.querySelector("#processing-time-chart"), timeChartOptions);
+    processingTimeChart.render();
+
+    transformationTypesChart = new ApexCharts(document.querySelector("#transformation-types-chart"), typesChartOptions);
+    transformationTypesChart.render();
+
+    errorTypesChart = new ApexCharts(document.querySelector("#error-types-chart"), errorChartOptions);
+    errorTypesChart.render();
+}
+
+function fetchChartData() {
+    // Show loading animation
+    showLoading(['processing-time-chart', 'transformation-types-chart', 'error-types-chart']);
+    
+    // Fetch data from API
+    fetch('/api/dashboard-data')
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(data => {
+            updateCharts(data);
+            hideLoading();
+        })
+        .catch(error => {
+            console.error('Error fetching dashboard data:', error);
+            hideLoading();
+        });
+}
+
+function updateCharts(data) {
+    // Update Processing Time Chart
+    if (processingTimeChart && data.processingTimes) {
+        processingTimeChart.updateOptions({
+            xaxis: {
+                categories: data.processingTimes.labels
+            }
+        });
+        processingTimeChart.updateSeries([{
+            name: 'Avg Processing Time (s)',
+            data: data.processingTimes.values
+        }]);
+    }
+    
+    // Update Transformation Types Chart
+    if (transformationTypesChart && data.transformationTypes) {
+        transformationTypesChart.updateOptions({
+            labels: data.transformationTypes.labels
+        });
+        transformationTypesChart.updateSeries(data.transformationTypes.values);
+    }
+    
+    // Update Error Types Chart
+    if (errorTypesChart && data.errorTypes) {
+        errorTypesChart.updateOptions({
+            xaxis: {
+                categories: data.errorTypes.labels
+            }
+        });
+        errorTypesChart.updateSeries([{
+            name: 'Error Count',
+            data: data.errorTypes.values
+        }]);
+    }
+}
+
+function showLoading(chartIds) {
+    // Add loading spinner to specified charts
+    chartIds.forEach(id => {
+        const el = document.getElementById(id);
+        if (el && !el.querySelector('.chart-loading')) {
+            const loadingEl = document.createElement('div');
+            loadingEl.className = 'chart-loading';
+            loadingEl.innerHTML = '<div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div>';
+            el.style.position = 'relative';
+            el.appendChild(loadingEl);
+        }
+    });
+}
+
+function hideLoading() {
+    // Remove all loading spinners
+    document.querySelectorAll('.chart-loading').forEach(el => el.remove());
+}
+</script>
+{% endblock %} 

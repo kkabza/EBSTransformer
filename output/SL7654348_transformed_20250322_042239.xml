@@ -1,0 +1,17 @@
+<?xml version="1.0" ?>
+<Records>
+  <Record>
+    <ClaimNumber>SL7654348</ClaimNumber>
+    <PolicyNumber>PN1122361</PolicyNumber>
+    <InsuredName>Scarlett Scott</InsuredName>
+    <LossDate>2024-04-06</LossDate>
+    <GlassRepairCost>430.25</GlassRepairCost>
+    <GlassType>Windshield</GlassType>
+    <VendorInvoiceNumber>INV775571</VendorInvoiceNumber>
+    <VehicleMake>Subaru</VehicleMake>
+    <VehicleModel>Forester</VehicleModel>
+    <VehicleYear>2022</VehicleYear>
+    <CustomerPhone>555-123-4594</CustomerPhone>
+    <DamageDescription>Severe crack with spider webbing pattern</DamageDescription>
+  </Record>
+</Records>

@@ -1,0 +1,2 @@
+ClaimNumber,PolicyNumber,InsuredName,LossDate,GlassRepairCost,GlassType,VendorInvoiceNumber,VehicleMake,VehicleModel,VehicleYear,CustomerPhone,DamageDescription
+SL7654358,PN1122371,Zoe Turner,2024-04-16,305.75,Side Window,INV775581,BMW,X3,2021,555-123-4604,Tempered glass completely shattered

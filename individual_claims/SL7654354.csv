@@ -1,0 +1,2 @@
+ClaimNumber,PolicyNumber,InsuredName,LossDate,GlassRepairCost,GlassType,VendorInvoiceNumber,VehicleMake,VehicleModel,VehicleYear,CustomerPhone,DamageDescription
+SL7654354,PN1122367,Layla Mitchell,2024-04-12,435.75,Windshield,INV775577,Hyundai,Tucson,2022,555-123-4600,Long crack across driver's side view

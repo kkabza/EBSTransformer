@@ -1,0 +1,2 @@
+ClaimNumber,PolicyNumber,InsuredName,LossDate,GlassRepairCost,GlassType,VendorInvoiceNumber,VehicleMake,VehicleModel,VehicleYear,CustomerPhone,DamageDescription
+SL7654345,PN1122358,Joseph King,2024-04-03,420.50,Windshield,INV775568,Mitsubishi,Outlander,2019,555-123-4591,Windshield cracked from edge to edge

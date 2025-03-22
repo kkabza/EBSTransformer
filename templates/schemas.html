@@ -1,0 +1,321 @@
+{% extends "base.html" %}
+
+{% block title %}Transformation Schemas{% endblock %}
+
+{% block page_title %}
+<div class="d-flex align-items-center">
+  <div>
+    <i class="material-icons-outlined align-middle me-2 fs-2">schema</i>
+  </div>
+  <div>
+    <h3 class="mb-0">Transformation Schemas</h3>
+    <p class="text-secondary mb-0">Manage and upload schema definitions for transformation rules</p>
+  </div>
+</div>
+{% endblock %}
+
+{% block content %}
+<!-- Available Schemas Section -->
+<div class="esb-accordion-item active">
+  <div class="esb-accordion-header">
+    <h5><i class="material-icons-outlined me-2">list</i>Available Schemas</h5>
+    <i class="material-icons-outlined esb-accordion-icon">expand_more</i>
+  </div>
+  <div class="esb-accordion-body">
+    <div class="row g-3">
+      {% for schema in schemas %}
+      <div class="col-md-6 col-lg-4">
+        <div class="card border h-100 rounded-4">
+          <div class="card-header">
+            <div class="d-flex align-items-center justify-content-between">
+              <h5 class="card-title mb-0 d-flex align-items-center">
+                <span class="schema-icon me-2 d-inline-flex align-items-center justify-content-center">
+                  <i class="material-icons-outlined">{{ schema.icon }}</i>
+                </span>
+                {{ schema.name }}
+              </h5>
+              <div class="dropdown">
+                <a href="javascript:;" class="dropdown-toggle-nocaret options dropdown-toggle" data-bs-toggle="dropdown">
+                  <i class="material-icons-outlined">more_vert</i>
+                </a>
+                <ul class="dropdown-menu">
+                  <li><a class="dropdown-item" href="#"><i class="material-icons-outlined fs-5 align-middle me-2">visibility</i>View Schema</a></li>
+                  <li><a class="dropdown-item" href="#"><i class="material-icons-outlined fs-5 align-middle me-2">download</i>Download</a></li>
+                  <li><a class="dropdown-item" href="#"><i class="material-icons-outlined fs-5 align-middle me-2">edit</i>Edit</a></li>
+                  <li><a class="dropdown-item schema-delete" href="javascript:;" data-schema-id="{{ schema.id }}" data-schema-name="{{ schema.name }}"><i class="material-icons-outlined fs-5 align-middle me-2">delete</i>Delete</a></li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="mb-3">
+              <p class="text-secondary mb-2">{{ schema.description }}</p>
+              <div class="d-flex align-items-center">
+                <div class="me-3">
+                  <span class="text-secondary">Source:</span>
+                  <span class="badge bg-primary rounded-3">{{ schema.source_type }}</span>
+                </div>
+                <div>
+                  <span class="text-secondary">Target:</span>
+                  <span class="badge bg-success rounded-3">{{ schema.target_type }}</span>
+                </div>
+              </div>
+            </div>
+            <div class="d-flex justify-content-between flex-wrap">
+              <div class="schema-meta me-3">
+                <p class="mb-0 text-secondary small">Last updated</p>
+                <p class="mb-0">{{ schema.updated }}</p>
+              </div>
+              <div class="schema-meta">
+                <p class="mb-0 text-secondary small">Transformation count</p>
+                <p class="mb-0">{{ schema.transformations }}</p>
+              </div>
+            </div>
+          </div>
+          <div class="card-footer">
+            <div class="d-flex justify-content-between align-items-center">
+              <a href="#" class="btn btn-sm btn-primary rounded-3">
+                <i class="material-icons-outlined align-middle me-1">visibility</i> View Schema
+              </a>
+              <a href="{{ url_for('transform_with_schema', schema_id=schema.id) }}" class="btn btn-sm btn-outline-primary rounded-3">
+                <i class="material-icons-outlined align-middle me-1">transform</i> Use
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+
+<!-- Upload New Schema Section -->
+<div class="esb-accordion-item active">
+  <div class="esb-accordion-header">
+    <h5><i class="material-icons-outlined me-2">upload_file</i>Upload New Schema</h5>
+    <i class="material-icons-outlined esb-accordion-icon">expand_more</i>
+  </div>
+  <div class="esb-accordion-body">
+    <div class="card rounded-4 w-100">
+      <div class="card-body">
+        <form action="{{ url_for('upload_schema') }}" method="post" enctype="multipart/form-data" id="schema-upload-form">
+          <div class="row g-3">
+            <div class="col-md-6">
+              <div class="mb-3">
+                <label for="schema_name" class="form-label">Schema Name</label>
+                <input type="text" class="form-control" id="schema_name" name="schema_name" required placeholder="Enter a descriptive name">
+              </div>
+              
+              <div class="mb-3">
+                <label for="schema_description" class="form-label">Description</label>
+                <textarea class="form-control" id="schema_description" name="schema_description" rows="3" placeholder="Briefly describe what this schema does"></textarea>
+              </div>
+              
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="mb-3">
+                    <label for="source_type" class="form-label">Source Type</label>
+                    <select class="form-select" id="source_type" name="source_type" required>
+                      <option value="">Select source format</option>
+                      <option value="xml">XML</option>
+                      <option value="json">JSON</option>
+                      <option value="csv">CSV</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="mb-3">
+                    <label for="target_type" class="form-label">Target Type</label>
+                    <select class="form-select" id="target_type" name="target_type" required>
+                      <option value="">Select target format</option>
+                      <option value="xml">XML</option>
+                      <option value="json">JSON</option>
+                      <option value="csv">CSV</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <div class="col-md-6">
+              <div class="mb-3">
+                <label for="schema_file" class="form-label">Schema Definition File</label>
+                <div class="file-upload-container">
+                  <input type="file" class="form-control" id="schema_file" name="schema_file" required accept=".json,.xml,.yaml,.yml">
+                  <div class="file-upload-placeholder">
+                    <div class="text-center p-4">
+                      <i class="material-icons-outlined d-block mb-3" style="font-size: 48px;">cloud_upload</i>
+                      <h5>Drag and drop your schema file here</h5>
+                      <p class="text-secondary">or click to browse files</p>
+                      <p class="small text-secondary">Supported formats: JSON, XML, YAML</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="mb-3">
+                <label for="schema_icon" class="form-label">Schema Icon</label>
+                <select class="form-select" id="schema_icon" name="schema_icon">
+                  <option value="transform">transform</option>
+                  <option value="schema">schema</option>
+                  <option value="data_object">data_object</option>
+                  <option value="upload_file">upload_file</option>
+                  <option value="code">code</option>
+                  <option value="settings">settings</option>
+                </select>
+              </div>
+            </div>
+            
+            <div class="col-12">
+              <div class="d-flex justify-content-end">
+                <button type="reset" class="btn btn-light rounded-3 me-2">
+                  <i class="material-icons-outlined align-middle me-1">clear</i> Reset
+                </button>
+                <button type="submit" class="btn btn-primary rounded-3">
+                  <i class="material-icons-outlined align-middle me-1">upload</i> Upload Schema
+                </button>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Delete Schema Modal -->
+<div class="modal" id="deleteSchemaModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content rounded-4">
+      <div class="modal-header">
+        <h5 class="modal-title">Confirm Schema Deletion</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <p>Are you sure you want to delete the schema "<span id="schema-name-placeholder"></span>"?</p>
+        <p class="text-danger">This action cannot be undone.</p>
+      </div>
+      <div class="modal-footer">
+        <form id="delete-schema-form" action="#" method="post">
+          <input type="hidden" id="delete_schema_id" name="schema_id" value="">
+          <button type="button" class="btn btn-light rounded-3" data-bs-dismiss="modal">Cancel</button>
+          <button type="submit" class="btn btn-danger rounded-3">Delete Schema</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Schema Preview Modal -->
+<div class="modal" id="schemaPreviewModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content rounded-4">
+      <div class="modal-header">
+        <h5 class="modal-title">Schema Preview</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="mb-3">
+          <label class="form-label">Schema Definition</label>
+          <pre><code class="json" id="schema-preview-content"></code></pre>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-light rounded-3" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Handle schema delete button clicks
+    document.querySelectorAll('.schema-delete').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        const schemaId = this.getAttribute('data-schema-id');
+        const schemaName = this.getAttribute('data-schema-name');
+        
+        document.getElementById('schema-name-placeholder').textContent = schemaName;
+        document.getElementById('delete_schema_id').value = schemaId;
+        
+        const deleteModal = new bootstrap.Modal(document.getElementById('deleteSchemaModal'));
+        deleteModal.show();
+      });
+    });
+    
+    // Enhance file input
+    const fileInput = document.getElementById('schema_file');
+    const fileUploadContainer = document.querySelector('.file-upload-container');
+    
+    fileInput.addEventListener('change', function() {
+      if (this.files.length > 0) {
+        const fileName = this.files[0].name;
+        const filePlaceholder = document.querySelector('.file-upload-placeholder');
+        filePlaceholder.innerHTML = `
+          <div class="p-3 text-center">
+            <i class="material-icons-outlined align-middle me-2">description</i>
+            <span>${fileName}</span>
+            <button type="button" class="btn btn-sm btn-link text-danger clear-file">
+              <i class="material-icons-outlined align-middle" style="font-size: 18px;">close</i>
+            </button>
+          </div>
+        `;
+        
+        // Add event listener to clear file button
+        document.querySelector('.clear-file').addEventListener('click', function(e) {
+          e.preventDefault();
+          fileInput.value = '';
+          document.querySelector('.file-upload-placeholder').innerHTML = `
+            <div class="text-center p-4">
+              <i class="material-icons-outlined d-block mb-3" style="font-size: 48px;">cloud_upload</i>
+              <h5>Drag and drop your schema file here</h5>
+              <p class="text-secondary">or click to browse files</p>
+              <p class="small text-secondary">Supported formats: JSON, XML, YAML</p>
+            </div>
+          `;
+        });
+      }
+    });
+    
+    // Handle drag and drop
+    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+      fileUploadContainer.addEventListener(eventName, preventDefaults, false);
+    });
+    
+    ['dragenter', 'dragover'].forEach(eventName => {
+      fileUploadContainer.addEventListener(eventName, highlight, false);
+    });
+    
+    ['dragleave', 'drop'].forEach(eventName => {
+      fileUploadContainer.addEventListener(eventName, unhighlight, false);
+    });
+    
+    fileUploadContainer.addEventListener('drop', handleDrop, false);
+    
+    function preventDefaults(e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+    
+    function highlight() {
+      fileUploadContainer.classList.add('highlight');
+    }
+    
+    function unhighlight() {
+      fileUploadContainer.classList.remove('highlight');
+    }
+    
+    function handleDrop(e) {
+      const dt = e.dataTransfer;
+      const files = dt.files;
+      fileInput.files = files;
+      
+      // Trigger change event
+      const event = new Event('change');
+      fileInput.dispatchEvent(event);
+    }
+  });
+</script>
+{% endblock %} 

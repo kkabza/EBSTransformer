@@ -1,0 +1,468 @@
+{% extends 'base.html' %}
+
+{% block title %}ESB Transformation Service - Documentation{% endblock %}
+
+{% block head %}
+{{ super() }}
+<style>
+  /* Additional styles to fix text visibility in code blocks */
+  .card-body pre,
+  .card-body code,
+  pre.code-block,
+  .code-block {
+    color: #333333 !important;
+  }
+  
+  .card.bg-light .card-body,
+  .card.bg-light .card-header,
+  .card-header.bg-light,
+  .bg-light {
+    color: #333333 !important;
+  }
+</style>
+{% endblock %}
+
+{% block page_title %}
+<div class="d-flex align-items-center">
+  <div>
+    <i class="material-icons-outlined align-middle me-2 fs-2">menu_book</i>
+  </div>
+  <div>
+    <h3 class="mb-0">Documentation</h3>
+    <p class="text-secondary mb-0">Guides and reference for using the ESB Transformation Service</p>
+  </div>
+</div>
+{% endblock %}
+
+{% block content %}
+<!-- Overview Section -->
+<div class="esb-accordion-item active">
+  <div class="esb-accordion-header">
+    <h5><i class="material-icons-outlined me-2">info</i>Overview</h5>
+    <i class="material-icons-outlined esb-accordion-icon">expand_more</i>
+  </div>
+  <div class="esb-accordion-body">
+    <div class="card rounded-4">
+      <div class="card-body">
+        <p>The ESB Transformation Service provides AI-powered transformations for insurance claim data between different formats. This service can handle XML, JSON, and CSV files, transforming them according to vendor-specific schemas and requirements.</p>
+        
+        <div class="row g-4 mt-2">
+          <div class="col-md-4">
+            <div class="card h-100 border rounded-4">
+              <div class="card-body text-center">
+                <div class="mb-3">
+                  <i class="material-icons-outlined" style="font-size: 48px;">swap_horiz</i>
+                </div>
+                <h5>Transformation Capabilities</h5>
+                <p class="text-secondary">Convert between multiple formats with intelligent field mapping and structural transformations.</p>
+              </div>
+            </div>
+          </div>
+          
+          <div class="col-md-4">
+            <div class="card h-100 border rounded-4">
+              <div class="card-body text-center">
+                <div class="mb-3">
+                  <i class="material-icons-outlined" style="font-size: 48px;">code</i>
+                </div>
+                <h5>Schema Support</h5>
+                <p class="text-secondary">Use vendor-provided schemas or create custom schemas to guide transformations.</p>
+              </div>
+            </div>
+          </div>
+          
+          <div class="col-md-4">
+            <div class="card h-100 border rounded-4">
+              <div class="card-body text-center">
+                <div class="mb-3">
+                  <i class="material-icons-outlined" style="font-size: 48px;">smart_toy</i>
+                </div>
+                <h5>AI-Powered</h5>
+                <p class="text-secondary">Leverages advanced AI models to understand and map complex data structures.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Supported Transformations Section -->
+<div class="esb-accordion-item active">
+  <div class="esb-accordion-header">
+    <h5><i class="material-icons-outlined me-2">compare_arrows</i>Supported Transformations</h5>
+    <i class="material-icons-outlined esb-accordion-icon">expand_more</i>
+  </div>
+  <div class="esb-accordion-body">
+    <div class="card rounded-4">
+      <div class="card-body">
+        <p>The service currently supports the following transformation types:</p>
+        
+        <div class="row g-4 mt-3">
+          <div class="col-md-12">
+            <div class="card border rounded-4 mb-4">
+              <div class="card-header bg-light">
+                <div class="d-flex align-items-center">
+                  <i class="material-icons-outlined me-2">description</i>
+                  <h5 class="mb-0">CSV to XML</h5>
+                  <span class="badge bg-primary ms-2 rounded-pill">Safelite Claims</span>
+                </div>
+              </div>
+              <div class="card-body">
+                <p>Transforms CSV flat file data (like Safelite glass repair claims) into vendor-specific XML batch format for payment processing.</p>
+                
+                <div class="row g-3">
+                  <div class="col-md-6">
+                    <div class="card bg-light h-100">
+                      <div class="card-header">Input (CSV)</div>
+                      <div class="card-body">
+                        <pre class="code-block mb-0 bg-light">ClaimNumber,PolicyNumber,InsuredName,LossDate,GlassRepairCost,GlassType,VendorInvoiceNumber
+CL20230512,POL9876543,John Smith,2023-05-10,420.75,Windshield,INV78901</pre>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="card bg-light h-100">
+                      <div class="card-header">Output (XML)</div>
+                      <div class="card-body">
+                        <pre class="code-block mb-0 bg-light">&lt;SafeliteBatch&gt;
+  &lt;BatchInfo&gt;
+    &lt;BatchID&gt;BAT20230522&lt;/BatchID&gt;
+    &lt;ProcessDate&gt;2023-05-22&lt;/ProcessDate&gt;
+  &lt;/BatchInfo&gt;
+  &lt;Claim&gt;
+    &lt;ClaimId&gt;CL20230512&lt;/ClaimId&gt;
+    &lt;PolicyId&gt;POL9876543&lt;/PolicyId&gt;
+    &lt;Name&gt;John Smith&lt;/Name&gt;
+    &lt;LossDate&gt;2023-05-10&lt;/LossDate&gt;
+    &lt;GlassDetails&gt;
+      &lt;RepairCost&gt;420.75&lt;/RepairCost&gt;
+      &lt;GlassType&gt;Windshield&lt;/GlassType&gt;
+    &lt;/GlassDetails&gt;
+    &lt;VendorInvoice&gt;INV78901&lt;/VendorInvoice&gt;
+  &lt;/Claim&gt;
+&lt;/SafeliteBatch&gt;</pre>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="col-md-12">
+            <div class="card border rounded-4 mb-4">
+              <div class="card-header bg-light">
+                <div class="d-flex align-items-center">
+                  <i class="material-icons-outlined me-2">data_object</i>
+                  <h5 class="mb-0">JSON to XML</h5>
+                  <span class="badge bg-success ms-2 rounded-pill">ISO Format</span>
+                </div>
+              </div>
+              <div class="card-body">
+                <p>Transforms JSON claim data into standardized ISO XML format for industry-standard data exchange.</p>
+                
+                <div class="row g-3">
+                  <div class="col-md-6">
+                    <div class="card bg-light h-100">
+                      <div class="card-header">Input (JSON)</div>
+                      <div class="card-body">
+                        <pre class="code-block mb-0 bg-light">{
+  "claim": {
+    "claimNumber": "CL-2023-92847",
+    "policy": {
+      "policyNumber": "POL-1234-ABC",
+      "insuredName": "Jane Doe"
+    },
+    "lossDetails": {
+      "lossDate": "2023-04-15",
+      "description": "Vehicle collision"
+    }
+  }
+}</pre>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="card bg-light h-100">
+                      <div class="card-header">Output (XML)</div>
+                      <div class="card-body">
+                        <pre class="code-block mb-0 bg-light">&lt;ClaimNotification&gt;
+  &lt;ClaimNumber&gt;CL-2023-92847&lt;/ClaimNumber&gt;
+  &lt;Policy&gt;
+    &lt;PolicyNumber&gt;POL-1234-ABC&lt;/PolicyNumber&gt;
+    &lt;InsuredName&gt;Jane Doe&lt;/InsuredName&gt;
+  &lt;/Policy&gt;
+  &lt;LossDetails&gt;
+    &lt;LossDate&gt;2023-04-15&lt;/LossDate&gt;
+    &lt;Description&gt;Vehicle collision&lt;/Description&gt;
+  &lt;/LossDetails&gt;
+&lt;/ClaimNotification&gt;</pre>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="col-md-12">
+            <div class="card border rounded-4">
+              <div class="card-header bg-light">
+                <div class="d-flex align-items-center">
+                  <i class="material-icons-outlined me-2">code</i>
+                  <h5 class="mb-0">XML to XML</h5>
+                  <span class="badge bg-info ms-2 rounded-pill">Legacy Format</span>
+                </div>
+              </div>
+              <div class="card-body">
+                <p>Transforms between different XML schemas, enabling compatibility with legacy systems and different vendor requirements.</p>
+                
+                <div class="row g-3">
+                  <div class="col-md-6">
+                    <div class="card bg-light h-100">
+                      <div class="card-header">Input (XML - Vendor Format)</div>
+                      <div class="card-body">
+                        <pre class="code-block mb-0 bg-light">&lt;Claim&gt;
+  &lt;ClaimID&gt;A12345&lt;/ClaimID&gt;
+  &lt;Customer&gt;
+    &lt;FirstName&gt;Robert&lt;/FirstName&gt;
+    &lt;LastName&gt;Johnson&lt;/LastName&gt;
+  &lt;/Customer&gt;
+  &lt;Incident date="2023-03-20"&gt;
+    &lt;Type&gt;Property Damage&lt;/Type&gt;
+  &lt;/Incident&gt;
+&lt;/Claim&gt;</pre>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="card bg-light h-100">
+                      <div class="card-header">Output (XML - Legacy Format)</div>
+                      <div class="card-body">
+                        <pre class="code-block mb-0 bg-light">&lt;LegacyClaim&gt;
+  &lt;ClaimReference&gt;A12345&lt;/ClaimReference&gt;
+  &lt;Claimant&gt;Robert Johnson&lt;/Claimant&gt;
+  &lt;IncidentDetails&gt;
+    &lt;IncidentDate&gt;2023-03-20&lt;/IncidentDate&gt;
+    &lt;IncidentType&gt;Property Damage&lt;/IncidentType&gt;
+  &lt;/IncidentDetails&gt;
+&lt;/LegacyClaim&gt;</pre>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- API Reference Section -->
+<div class="esb-accordion-item active">
+  <div class="esb-accordion-header">
+    <h5><i class="material-icons-outlined me-2">api</i>API Reference</h5>
+    <i class="material-icons-outlined esb-accordion-icon">expand_more</i>
+  </div>
+  <div class="esb-accordion-body">
+    <div class="card rounded-4">
+      <div class="card-body">
+        <p>The ESB Transformation Service provides a RESTful API for programmatic access to transformations.</p>
+        
+        <div class="row g-4 mt-3">
+          <div class="col-md-12">
+            <div class="card border rounded-4 mb-4">
+              <div class="card-header bg-light">
+                <div class="d-flex align-items-center justify-content-between">
+                  <div>
+                    <h5 class="mb-0">Upload and Transform</h5>
+                  </div>
+                  <div>
+                    <span class="badge bg-primary rounded-pill px-3">POST</span>
+                    <code class="ms-2">/api/transform</code>
+                  </div>
+                </div>
+              </div>
+              <div class="card-body">
+                <p>Upload a file for transformation with optional schema selection.</p>
+                
+                <h6 class="mt-3">Request</h6>
+                <pre class="code-block bg-light">POST /api/transform HTTP/1.1
+Content-Type: multipart/form-data
+
+file: [Binary File Content]
+schema_template: "iso_claim" (optional)
+custom_schema: [Binary Schema File] (optional)</pre>
+                
+                <h6 class="mt-3">Response</h6>
+                <pre class="code-block bg-light">HTTP/1.1 200 OK
+Content-Type: application/json
+
+{
+  "job_id": "12345678-abcd-1234-efgh-123456789abc",
+  "status": "processing"
+}</pre>
+              </div>
+            </div>
+          </div>
+          
+          <div class="col-md-12">
+            <div class="card border rounded-4 mb-4">
+              <div class="card-header bg-light">
+                <div class="d-flex align-items-center justify-content-between">
+                  <div>
+                    <h5 class="mb-0">Check Transformation Status</h5>
+                  </div>
+                  <div>
+                    <span class="badge bg-success rounded-pill px-3">GET</span>
+                    <code class="ms-2">/api/transform/status/{job_id}</code>
+                  </div>
+                </div>
+              </div>
+              <div class="card-body">
+                <p>Check the status of a transformation job.</p>
+                
+                <h6 class="mt-3">Response</h6>
+                <pre class="code-block bg-light">HTTP/1.1 200 OK
+Content-Type: application/json
+
+{
+  "job_id": "12345678-abcd-1234-efgh-123456789abc",
+  "status": "completed",
+  "result_url": "/api/transform/result/12345678-abcd-1234-efgh-123456789abc"
+}</pre>
+              </div>
+            </div>
+          </div>
+          
+          <div class="col-md-12">
+            <div class="card border rounded-4 mb-4">
+              <div class="card-header bg-light">
+                <div class="d-flex align-items-center justify-content-between">
+                  <div>
+                    <h5 class="mb-0">Get Transformation Result</h5>
+                  </div>
+                  <div>
+                    <span class="badge bg-success rounded-pill px-3">GET</span>
+                    <code class="ms-2">/api/transform/result/{job_id}</code>
+                  </div>
+                </div>
+              </div>
+              <div class="card-body">
+                <p>Retrieve the result of a completed transformation.</p>
+                
+                <h6 class="mt-3">Response</h6>
+                <pre class="code-block bg-light">HTTP/1.1 200 OK
+Content-Type: application/xml
+
+&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;ClaimNotification&gt;
+  ...transformed content...
+&lt;/ClaimNotification&gt;</pre>
+              </div>
+            </div>
+          </div>
+          
+          <div class="col-md-12">
+            <div class="card border rounded-4">
+              <div class="card-header bg-light">
+                <div class="d-flex align-items-center justify-content-between">
+                  <div>
+                    <h5 class="mb-0">Get Metrics</h5>
+                  </div>
+                  <div>
+                    <span class="badge bg-success rounded-pill px-3">GET</span>
+                    <code class="ms-2">/api/metrics</code>
+                  </div>
+                </div>
+              </div>
+              <div class="card-body">
+                <p>Retrieve service metrics including processing times and transformation counts.</p>
+                
+                <h6 class="mt-3">Response</h6>
+                <pre class="code-block bg-light">HTTP/1.1 200 OK
+Content-Type: application/json
+
+{
+  "completed": 128,
+  "pending": 2,
+  "errors": 5,
+  "average_processing_time": 0.452
+}</pre>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Schema Management Section -->
+<div class="esb-accordion-item active">
+  <div class="esb-accordion-header">
+    <h5><i class="material-icons-outlined me-2">schema</i>Schema Management</h5>
+    <i class="material-icons-outlined esb-accordion-icon">expand_more</i>
+  </div>
+  <div class="esb-accordion-body">
+    <div class="card rounded-4">
+      <div class="card-body">
+        <p>Vendor schemas define the structure and rules for transformations. You can use built-in templates or upload custom schemas.</p>
+        
+        <div class="card border rounded-4 mt-4 mb-4">
+          <div class="card-header bg-light">
+            <h5 class="mb-0">Built-in Schemas</h5>
+          </div>
+          <div class="card-body">
+            <ul class="list-group list-group-flush">
+              <li class="list-group-item d-flex align-items-center">
+                <i class="material-icons-outlined me-3">description</i>
+                <div>
+                  <h6 class="mb-0">ISO Standard Claim</h6>
+                  <p class="mb-0 text-secondary small">Insurance Services Office standard format for property and casualty claims</p>
+                </div>
+              </li>
+              <li class="list-group-item d-flex align-items-center">
+                <i class="material-icons-outlined me-3">file_copy</i>
+                <div>
+                  <h6 class="mb-0">Safelite Claims Batch</h6>
+                  <p class="mb-0 text-secondary small">Format for glass repair claims processing</p>
+                </div>
+              </li>
+              <li class="list-group-item d-flex align-items-center">
+                <i class="material-icons-outlined me-3">history</i>
+                <div>
+                  <h6 class="mb-0">Legacy XML Claim</h6>
+                  <p class="mb-0 text-secondary small">Format for compatibility with older internal systems</p>
+                </div>
+              </li>
+            </ul>
+          </div>
+        </div>
+        
+        <div class="card border rounded-4">
+          <div class="card-header bg-light">
+            <h5 class="mb-0">Custom Schema Upload</h5>
+          </div>
+          <div class="card-body">
+            <p>You can upload custom schemas in XSD, JSON Schema, or example XML format. The system will use these to guide transformations.</p>
+            <a href="{{ url_for('schemas') }}" class="btn btn-primary rounded-3 mt-3">
+              <i class="material-icons-outlined align-middle me-1">upload_file</i> Upload Schemas
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  // Any documentation-specific scripts can go here
+</script>
+{% endblock %} 

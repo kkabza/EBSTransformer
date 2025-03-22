@@ -1,0 +1,2 @@
+ClaimNumber,PolicyNumber,InsuredName,LossDate,GlassRepairCost,GlassType,VendorInvoiceNumber,VehicleMake,VehicleModel,VehicleYear,CustomerPhone,DamageDescription
+SL7654322,PN1122335,Emma Wilson,2024-03-11,275.50,Side Window,INV775545,Honda,Civic,2019,555-123-4568,"Complete shatter from attempted break-in, driver side front"

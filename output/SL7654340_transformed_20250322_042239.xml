@@ -1,0 +1,17 @@
+<?xml version="1.0" ?>
+<Records>
+  <Record>
+    <ClaimNumber>SL7654340</ClaimNumber>
+    <PolicyNumber>PN1122353</PolicyNumber>
+    <InsuredName>Abigail Clark</InsuredName>
+    <LossDate>2024-03-29</LossDate>
+    <GlassRepairCost>300.25</GlassRepairCost>
+    <GlassType>Side Window</GlassType>
+    <VendorInvoiceNumber>INV775563</VendorInvoiceNumber>
+    <VehicleMake>Cadillac</VehicleMake>
+    <VehicleModel>XT5</VehicleModel>
+    <VehicleYear>2021</VehicleYear>
+    <CustomerPhone>555-123-4586</CustomerPhone>
+    <DamageDescription>Broken during parking lot incident</DamageDescription>
+  </Record>
+</Records>

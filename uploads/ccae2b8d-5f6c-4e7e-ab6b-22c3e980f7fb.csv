@@ -1,0 +1,2 @@
+ClaimNumber,PolicyNumber,InsuredName,LossDate,GlassRepairCost,GlassType,VendorInvoiceNumber,VehicleMake,VehicleModel,VehicleYear,CustomerPhone,DamageDescription
+SL7654324,PN1122337,Olivia Martinez,2024-03-13,450.00,Windshield,INV775547,Chevrolet,Equinox,2018,555-123-4570,"Multiple star breaks, compromised visibility"

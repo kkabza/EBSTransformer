@@ -1,0 +1,2 @@
+ClaimNumber,PolicyNumber,InsuredName,LossDate,GlassRepairCost,GlassType,VendorInvoiceNumber,VehicleMake,VehicleModel,VehicleYear,CustomerPhone,DamageDescription
+SL7654348,PN1122361,Scarlett Scott,2024-04-06,430.25,Windshield,INV775571,Subaru,Forester,2022,555-123-4594,Severe crack with spider webbing pattern

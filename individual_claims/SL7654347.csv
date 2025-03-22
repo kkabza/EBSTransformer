@@ -1,0 +1,2 @@
+ClaimNumber,PolicyNumber,InsuredName,LossDate,GlassRepairCost,GlassType,VendorInvoiceNumber,VehicleMake,VehicleModel,VehicleYear,CustomerPhone,DamageDescription
+SL7654347,PN1122360,David Hill,2024-04-05,535.00,Rear Window,INV775570,Land Rover,Discovery,2018,555-123-4593,"Damaged from heavy hail, multiple impacts"

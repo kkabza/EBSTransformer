@@ -1,0 +1,2 @@
+ClaimNumber,PolicyNumber,InsuredName,LossDate,GlassRepairCost,GlassType,VendorInvoiceNumber,VehicleMake,VehicleModel,VehicleYear,CustomerPhone,DamageDescription
+SL7654370,PN1122383,Chloe Cook,2024-04-28,295.75,Side Window,INV775593,Lincoln,Navigator,2019,555-123-4616,Side window shattered completely 

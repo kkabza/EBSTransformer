@@ -1,0 +1,2 @@
+ClaimNumber,PolicyNumber,InsuredName,LossDate,GlassRepairCost,GlassType,VendorInvoiceNumber,VehicleMake,VehicleModel,VehicleYear,CustomerPhone,DamageDescription
+SL7654355,PN1122368,Owen Perez,2024-04-13,290.00,Side Window,INV775578,Kia,Optima,2018,555-123-4601,Broken glass from attempted break-in

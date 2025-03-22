@@ -1,0 +1,2 @@
+ClaimNumber,PolicyNumber,InsuredName,LossDate,GlassRepairCost,GlassType,VendorInvoiceNumber,VehicleMake,VehicleModel,VehicleYear,CustomerPhone,DamageDescription
+SL7654366,PN1122379,Lily Sanchez,2024-04-24,420.75,Windshield,INV775589,Buick,Envision,2019,555-123-4612,Windshield cracked from temperature stress

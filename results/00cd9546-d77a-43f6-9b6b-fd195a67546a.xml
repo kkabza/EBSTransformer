@@ -1,0 +1,17 @@
+<?xml version="1.0" ?>
+<Records>
+  <Record>
+    <ClaimNumber>SL7654321</ClaimNumber>
+    <PolicyNumber>PN1122334</PolicyNumber>
+    <InsuredName>Alex Johnson</InsuredName>
+    <LossDate>2024-03-10</LossDate>
+    <GlassRepairCost>399.99</GlassRepairCost>
+    <GlassType>Windshield</GlassType>
+    <VendorInvoiceNumber>INV775544</VendorInvoiceNumber>
+    <VehicleMake>Toyota</VehicleMake>
+    <VehicleModel>Camry</VehicleModel>
+    <VehicleYear>2020</VehicleYear>
+    <CustomerPhone>555-123-4567</CustomerPhone>
+    <DamageDescription>Rock impact damage, 4-inch crack at lower right corner</DamageDescription>
+  </Record>
+</Records>

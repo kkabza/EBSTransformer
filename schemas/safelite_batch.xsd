@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
+    <xs:element name="SafeliteClaimsBatch">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="BatchInfo">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element name="BatchId" type="xs:string"/>
+                            <xs:element name="GeneratedDate" type="xs:dateTime"/>
+                            <xs:element name="ClaimCount" type="xs:integer"/>
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+                <xs:element name="Claims">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element name="Claim" maxOccurs="unbounded">
+                                <xs:complexType>
+                                    <xs:sequence>
+                                        <xs:element name="ClaimId" type="xs:string"/>
+                                        <xs:element name="PolicyId" type="xs:string"/>
+                                        <xs:element name="Customer">
+                                            <xs:complexType>
+                                                <xs:sequence>
+                                                    <xs:element name="Name" type="xs:string"/>
+                                                </xs:sequence>
+                                            </xs:complexType>
+                                        </xs:element>
+                                        <xs:element name="LossDetails">
+                                            <xs:complexType>
+                                                <xs:sequence>
+                                                    <xs:element name="DateOfLoss" type="xs:date"/>
+                                                    <xs:element name="GlassType" type="xs:string"/>
+                                                    <xs:element name="RepairCost">
+                                                        <xs:complexType>
+                                                            <xs:simpleContent>
+                                                                <xs:extension base="xs:decimal">
+                                                                    <xs:attribute name="currency" type="xs:string" use="required"/>
+                                                                </xs:extension>
+                                                            </xs:simpleContent>
+                                                        </xs:complexType>
+                                                    </xs:element>
+                                                    <xs:element name="VendorInvoiceId" type="xs:string"/>
+                                                </xs:sequence>
+                                            </xs:complexType>
+                                        </xs:element>
+                                    </xs:sequence>
+                                </xs:complexType>
+                            </xs:element>
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+</xs:schema> 

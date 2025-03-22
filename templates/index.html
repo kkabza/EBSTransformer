@@ -1,0 +1,747 @@
+{% extends "base.html" %}
+
+{% block title %}ESB Transformer - Home{% endblock %}
+
+{% block page_title %}File Transformation Hub{% endblock %}
+
+{% block content %}
+<!-- Stats Grid -->
+<div class="esb-accordion-item active fixed-accordion">
+    <div class="esb-accordion-header">
+        <h5><i class="material-icons-outlined me-2">analytics</i>Dashboard Statistics</h5>
+        <i class="material-icons-outlined esb-accordion-icon">expand_more</i>
+    </div>
+    <div class="esb-accordion-body">
+        <div class="row">
+            <div class="col-md-3 mb-4">
+                <div class="card stats-card">
+                    <div class="card-body text-center">
+                        <h2 class="stat-value">{{ stats.total_transformations if stats is defined else '0' }}</h2>
+                        <div class="stat-label">Total Transformations</div>
+                        <div class="stat-icon"><i class="fas fa-exchange-alt"></i></div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-4">
+                <div class="card stats-card">
+                    <div class="card-body text-center">
+                        <h2 class="stat-value">{{ stats.today_transformations if stats is defined else '0' }}</h2>
+                        <div class="stat-label">Today's Transformations</div>
+                        <div class="stat-icon"><i class="fas fa-calendar-day"></i></div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-4">
+                <div class="card stats-card">
+                    <div class="card-body text-center">
+                        <h2 class="stat-value">{{ stats.avg_process_time|round(2) if stats is defined else 'N/A' }}s</h2>
+                        <div class="stat-label">Average Process Time</div>
+                        <div class="stat-icon"><i class="fas fa-clock"></i></div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-4">
+                <div class="card stats-card">
+                    <div class="card-body text-center">
+                        <h2 class="stat-value">{{ stats.success_rate|round(1) if stats is defined else 'N/A' }}%</h2>
+                        <div class="stat-label">Success Rate</div>
+                        <div class="stat-icon"><i class="fas fa-check-circle"></i></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Upload Area -->
+<div class="esb-accordion-item active fixed-accordion">
+    <div class="esb-accordion-header">
+        <h5><i class="material-icons-outlined me-2">upload_file</i>File Transformation</h5>
+        <i class="material-icons-outlined esb-accordion-icon">expand_more</i>
+    </div>
+    <div class="esb-accordion-body">
+        <form id="upload-form" action="/upload" method="post" enctype="multipart/form-data">
+            <div class="drag-drop-area" id="drop-area">
+                <div class="dropzone-content text-center">
+                    <div class="upload-icon mb-3">
+                        <i class="fas fa-cloud-upload-alt fa-3x"></i>
+                    </div>
+                    <h3>Drag & Drop Files Here</h3>
+                    <p class="text-secondary mb-4">
+                        Upload CSV, JSON, or XML files for transformation
+                    </p>
+                    
+                    <div id="drop-files-here" class="drop-indicator mb-4">
+                        <i class="fas fa-file-arrow-down"></i>
+                        Drop files here
+                    </div>
+                    
+                    <div class="button-group">
+                        <button type="button" class="btn btn-primary mr-3" id="file-select-btn">
+                            <i class="fas fa-folder-open"></i> Browse Files
+                        </button>
+                        <button type="submit" class="btn btn-primary" id="transform-btn">
+                            <i class="fas fa-bolt"></i> Transform
+                            <span class="loader d-none" id="transform-loader"><i class="fas fa-spinner fa-spin"></i></span>
+                        </button>
+                    </div>
+                    
+                    <input type="file" name="file" id="file-input" accept=".csv,.json,.xml" multiple class="d-none">
+                </div>
+                
+                <div class="file-list mt-4" id="file-list"></div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Processing Status -->
+<div class="esb-accordion-item d-none" id="processing-status">
+    <div class="esb-accordion-header">
+        <h5><i class="material-icons-outlined me-2">settings</i>Processing Files <span id="processing-count"></span></h5>
+        <i class="material-icons-outlined esb-accordion-icon">expand_more</i>
+    </div>
+    <div class="esb-accordion-body">
+        <p id="status-message">Transforming your files...</p>
+        <div class="progress">
+            <div class="progress-bar progress-animated" id="progress-bar" style="width: 0%"></div>
+        </div>
+    </div>
+</div>
+
+<!-- Agent Output Section -->
+<div class="esb-accordion-item active">
+    <div class="esb-accordion-header">
+        <h5><i class="material-icons-outlined me-2">smart_toy</i>Agent Output</h5>
+        <i class="material-icons-outlined esb-accordion-icon">expand_more</i>
+    </div>
+    <div class="esb-accordion-body">
+        <div id="agent-output" class="agent-output-container">
+            <div class="agent-message info">
+                <span class="timestamp">{{ now.strftime('%H:%M:%S') if now is defined else datetime.now().strftime('%H:%M:%S') }}</span>
+                <span class="message">Agent initialized and ready. Upload files to begin transformation.</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Results Section -->
+<div class="esb-accordion-item d-none" id="results-section">
+    <div class="esb-accordion-header">
+        <h5><i class="material-icons-outlined me-2">task_alt</i>Transformation Results</h5>
+        <i class="material-icons-outlined esb-accordion-icon">expand_more</i>
+    </div>
+    <div class="esb-accordion-body" id="results-content">
+        <!-- Results will be loaded here -->
+    </div>
+</div>
+
+<!-- Recent Transformations -->
+<div class="esb-accordion-item active">
+    <div class="esb-accordion-header">
+        <h5><i class="material-icons-outlined me-2">history</i>Recent Transformations</h5>
+        <i class="material-icons-outlined esb-accordion-icon">expand_more</i>
+    </div>
+    <div class="esb-accordion-body">
+        <div class="mb-3 d-flex justify-content-end">
+            <button class="btn btn-sm btn-primary rounded-3 me-2" id="refresh-btn">
+                <i class="fas fa-sync-alt me-1"></i> Refresh
+            </button>
+            <button class="btn btn-sm btn-outline-secondary rounded-3">
+                <i class="fas fa-download me-1"></i> Export
+            </button>
+        </div>
+        <div class="table-responsive">
+            <table class="table mb-0 align-middle">
+                <thead class="table-light">
+                    <tr>
+                        <th>ID</th>
+                        <th>File Type</th>
+                        <th>Status</th>
+                        <th>Time</th>
+                        <th>Duration</th>
+                        <th>Size</th>
+                        <th class="text-center">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if transformations %}
+                        {% for id, transform in transformations %}
+                        <tr>
+                            <td><span class="badge bg-dark">{{ id[:8] }}</span></td>
+                            <td>
+                                {% if transform.file_type == 'xml' %}
+                                <span class="badge bg-primary text-white">XML</span>
+                                {% elif transform.file_type == 'json' %}
+                                <span class="badge bg-success text-white">JSON</span>
+                                {% elif transform.file_type == 'csv' %}
+                                <span class="badge bg-info text-white">CSV</span>
+                                {% else %}
+                                <span class="badge bg-secondary text-white">{{ transform.file_type }}</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if transform.status == 'completed' %}
+                                <span class="status-badge status-completed"><i class="fas fa-check-circle me-1"></i>Completed</span>
+                                {% elif transform.status == 'error' %}
+                                <span class="status-badge status-failed"><i class="fas fa-times-circle me-1"></i>Error</span>
+                                {% else %}
+                                <span class="status-badge status-processing"><i class="fas fa-spinner me-1"></i>{{ transform.status }}</span>
+                                {% endif %}
+                            </td>
+                            <td>{{ transform.formatted_time }}</td>
+                            <td>
+                                {% if transform.duration is defined %}
+                                <span class="fw-bold">{{ "%.2f" % (transform.duration * 1000) }}</span> ms
+                                {% else %}
+                                N/A
+                                {% endif %}
+                            </td>
+                            <td>{{ transform.size | default('N/A') }} chars</td>
+                            <td class="text-center">
+                                <a href="/comparison/{{ id }}" class="btn btn-sm btn-primary">
+                                    <i class="fas fa-eye me-1"></i> View
+                                </a>
+                                <a href="/download/{{ id }}" class="btn btn-sm btn-outline-secondary ms-2">
+                                    <i class="fas fa-download"></i>
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    {% else %}
+                        <tr>
+                            <td colspan="7" class="text-center py-4">No transformations found. Try uploading some files!</td>
+                        </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Charts Grid -->
+<div class="esb-accordion-item">
+    <div class="esb-accordion-header">
+        <h5><i class="material-icons-outlined me-2">pie_chart</i>Transformation Analytics</h5>
+        <i class="material-icons-outlined esb-accordion-icon">expand_more</i>
+    </div>
+    <div class="esb-accordion-body">
+        <div class="grid grid-cols-2 gap-4">
+            <div class="chart-container">
+                <!-- Store data in data attributes to avoid mixing Jinja with JS -->
+                <canvas id="transformationTypesChart" 
+                        data-csv-count="{{ stats.csv_count if stats is defined else '0' }}"
+                        data-json-count="{{ stats.json_count if stats is defined else '0' }}"
+                        data-xml-count="{{ stats.xml_count if stats is defined else '0' }}"></canvas>
+            </div>
+            <div class="chart-container">
+                <!-- Store encoded JSON in data attributes -->
+                <canvas id="processingTimeChart"
+                        data-time-labels="{{ stats.time_labels|tojson if stats is defined else '[]' }}"
+                        data-time-values="{{ stats.time_values|tojson if stats is defined else '[]' }}"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // File handling logic
+    const dropArea = document.getElementById('drop-area');
+    const fileInput = document.getElementById('file-input');
+    const fileSelectBtn = document.getElementById('file-select-btn');
+    const fileList = document.getElementById('file-list');
+    const uploadForm = document.getElementById('upload-form');
+    const transformBtn = document.getElementById('transform-btn');
+    const transformLoader = document.getElementById('transform-loader');
+    const processingStatus = document.getElementById('processing-status');
+    const resultsSection = document.getElementById('results-section');
+    const progressBar = document.getElementById('progress-bar');
+    const statusMessage = document.getElementById('status-message');
+    const processingCount = document.getElementById('processing-count');
+    
+    // Agent output function
+    function updateAgentOutput(message, type = 'info') {
+        const agentOutput = document.getElementById('agent-output');
+        if (!agentOutput) return;
+        
+        // Create a new message element
+        const messageElement = document.createElement('div');
+        messageElement.className = `agent-message ${type}`;
+        
+        // Set the message text
+        messageElement.innerHTML = `
+            <span class="timestamp">${new Date().toLocaleTimeString()}</span>
+            <span class="message">${message}</span>
+        `;
+        
+        // Add the message to the output
+        agentOutput.appendChild(messageElement);
+        
+        // Scroll to the bottom
+        agentOutput.scrollTop = agentOutput.scrollHeight;
+        
+        // Also log to console for debugging
+        console.log(`[Agent] ${type.toUpperCase()}: ${message}`);
+    }
+    
+    // At startup, log that we're ready
+    document.addEventListener('DOMContentLoaded', function() {
+        updateAgentOutput("Agent initialized and ready. Upload files to begin transformation.", "info");
+        
+        // Also add a fetch transformations message
+        setTimeout(() => {
+            updateAgentOutput("Fetching recent transformations...", "info");
+        }, 500);
+    });
+
+    // Initialize charts only when the document is fully loaded
+    document.addEventListener('DOMContentLoaded', function() {
+        // Transformation types chart
+        const transformationTypesCtx = document.getElementById('transformationTypesChart');
+        if (transformationTypesCtx) {
+            // Get data from data attributes
+            const csvCount = parseInt(transformationTypesCtx.getAttribute('data-csv-count') || 0);
+            const jsonCount = parseInt(transformationTypesCtx.getAttribute('data-json-count') || 0);
+            const xmlCount = parseInt(transformationTypesCtx.getAttribute('data-xml-count') || 0);
+            
+            new Chart(transformationTypesCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['CSV to XML', 'JSON to XML', 'XML to XML'],
+                    datasets: [{
+                        data: [csvCount, jsonCount, xmlCount],
+                        backgroundColor: [
+                            'rgba(54, 162, 235, 0.7)',
+                            'rgba(255, 99, 132, 0.7)',
+                            'rgba(75, 192, 192, 0.7)'
+                        ],
+                        borderColor: [
+                            'rgba(54, 162, 235, 1)',
+                            'rgba(255, 99, 132, 1)',
+                            'rgba(75, 192, 192, 1)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        },
+                        title: {
+                            display: true,
+                            text: 'Transformation Types'
+                        }
+                    }
+                }
+            });
+        }
+    
+        // Processing time chart
+        const processingTimeCtx = document.getElementById('processingTimeChart');
+        if (processingTimeCtx) {
+            // Get data from data attributes (parse JSON)
+            const timeLabels = JSON.parse(processingTimeCtx.getAttribute('data-time-labels') || '[]');
+            const timeValues = JSON.parse(processingTimeCtx.getAttribute('data-time-values') || '[]');
+            
+            new Chart(processingTimeCtx, {
+                type: 'line',
+                data: {
+                    labels: timeLabels,
+                    datasets: [{
+                        label: 'Processing Time (s)',
+                        data: timeValues,
+                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        borderWidth: 2,
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Recent Processing Times'
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        }
+    });
+
+    // Event listeners for file upload
+    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+        dropArea.addEventListener(eventName, preventDefaults, false);
+    });
+    
+    function preventDefaults(e) {
+        e.preventDefault();
+        e.stopPropagation();
+    }
+    
+    ['dragenter', 'dragover'].forEach(eventName => {
+        dropArea.addEventListener(eventName, highlight, false);
+    });
+    
+    ['dragleave', 'drop'].forEach(eventName => {
+        dropArea.addEventListener(eventName, unhighlight, false);
+    });
+    
+    function highlight() {
+        dropArea.classList.add('drag-over');
+    }
+    
+    function unhighlight() {
+        dropArea.classList.remove('drag-over');
+    }
+    
+    dropArea.addEventListener('drop', handleDrop, false);
+    
+    function handleDrop(e) {
+        const dt = e.dataTransfer;
+        const files = dt.files;
+        
+        if (fileInput) {
+            try {
+                fileInput.files = files;
+                console.log("File input files updated successfully");
+                handleFiles(files);
+            } catch (err) {
+                console.error("Error setting files: ", err);
+                // If direct assignment fails, clear and use DataTransfer
+                const newFiles = new DataTransfer();
+                for (let i = 0; i < files.length; i++) {
+                    newFiles.items.add(files[i]);
+                }
+                fileInput.files = newFiles.files;
+                handleFiles(files);
+            }
+        } else {
+            console.error("File input element not found");
+        }
+    }
+    
+    fileSelectBtn.addEventListener('click', () => {
+        fileInput.click();
+    });
+    
+    fileInput.addEventListener('change', () => {
+        handleFiles(fileInput.files);
+    });
+    
+    function handleFiles(files) {
+        fileList.innerHTML = '';
+        
+        if (files.length > 0) {
+            Array.from(files).forEach(file => {
+                const fileItem = document.createElement('div');
+                fileItem.className = 'file-item';
+                
+                const icon = document.createElement('i');
+                icon.className = 'file-item-icon fas fa-file';
+                
+                const name = document.createElement('span');
+                name.className = 'file-item-name';
+                name.textContent = file.name;
+                
+                const size = document.createElement('span');
+                size.className = 'file-item-size';
+                size.textContent = formatFileSize(file.size);
+                
+                fileItem.appendChild(icon);
+                fileItem.appendChild(name);
+                fileItem.appendChild(size);
+                
+                fileList.appendChild(fileItem);
+            });
+            
+            transformBtn.disabled = false;
+        } else {
+            transformBtn.disabled = true;
+        }
+    }
+    
+    function formatFileSize(bytes) {
+        if (bytes < 1024) return bytes + ' B';
+        else if (bytes < 1048576) return (bytes / 1024).toFixed(1) + ' KB';
+        else return (bytes / 1048576).toFixed(1) + ' MB';
+    }
+    
+    uploadForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        if (fileInput.files.length === 0) {
+            updateAgentOutput("Error: No files selected", "error");
+            alert('Please select files to transform');
+            return;
+        }
+        
+        // Show processing status
+        processingStatus.classList.remove('d-none');
+        processingStatus.classList.add('active');
+        processingCount.textContent = `(${fileInput.files.length} file${fileInput.files.length > 1 ? 's' : ''})`;
+        transformBtn.disabled = true;
+        transformLoader.classList.remove('d-none');
+        
+        updateAgentOutput(`Beginning transformation of ${fileInput.files.length} files...`);
+        
+        // Create FormData for AJAX submission
+        const formData = new FormData();
+        for (let i = 0; i < fileInput.files.length; i++) {
+            formData.append('file', fileInput.files[i]);
+        }
+        
+        // Simulate progress (will be replaced with actual progress in production)
+        let progress = 0;
+        const interval = setInterval(() => {
+            progress += 5;
+            progressBar.style.width = progress + '%';
+            
+            if (progress % 20 === 0) {
+                updateAgentOutput(`Transformation in progress: ${progress}% complete`);
+            }
+            
+            if (progress >= 100) {
+                clearInterval(interval);
+                
+                updateAgentOutput("Transformation processing complete", "success");
+                statusMessage.textContent = 'Transformation complete!';
+                
+                // Send AJAX request instead of form submission
+                fetch('/upload', {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    transformLoader.classList.add('d-none');
+                    transformBtn.disabled = false;
+                    
+                    // Show results section
+                    resultsSection.classList.remove('d-none');
+                    resultsSection.classList.add('active');
+                    
+                    updateAgentOutput("Server processed files successfully!", "success");
+                    
+                    // Update recent transformations table
+                    fetchAndUpdateRecentTransformations();
+                    
+                    // Display results
+                    if (data.result_ids && data.result_ids.length > 0) {
+                        const resultsContent = document.getElementById('results-content');
+                        if (resultsContent) {
+                            resultsContent.innerHTML = `
+                                <div class="alert alert-success" role="alert">
+                                    <i class="fas fa-check-circle me-2"></i>
+                                    ${data.result_ids.length} file(s) transformed successfully!
+                                </div>
+                                <div class="d-flex justify-content-end mt-3">
+                                    <a href="/comparison/${data.result_ids[0]}" class="btn btn-primary">
+                                        <i class="fas fa-eye me-1"></i> View Results
+                                    </a>
+                                </div>
+                            `;
+                        }
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    updateAgentOutput(`Error during processing: ${error.message}`, "error");
+                    transformLoader.classList.add('d-none');
+                    transformBtn.disabled = false;
+                    
+                    const resultsContent = document.getElementById('results-content');
+                    if (resultsContent) {
+                        resultsContent.innerHTML = `
+                            <div class="alert alert-danger" role="alert">
+                                <i class="fas fa-exclamation-circle me-2"></i>
+                                Error during transformation: ${error.message}
+                            </div>
+                        `;
+                    }
+                });
+            }
+        }, 100);
+    });
+
+    // Function to fetch and update recent transformations
+    function fetchAndUpdateRecentTransformations() {
+        updateAgentOutput("Fetching latest transformation data...");
+        
+        fetch('/api/latest-transformations')
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`Network response error: ${response.status}`);
+                }
+                updateAgentOutput("Received transformation data from server", "success");
+                return response.json();
+            })
+            .then(data => {
+                // Update the recent transformations table
+                updateAgentOutput(`Processing ${data.transformations.length} transformation records...`);
+                updateRecentTransformationsTable(data.transformations);
+                
+                // Update stats if available
+                if (data.stats) {
+                    updateAgentOutput("Updating dashboard statistics...");
+                    updateDashboardStats(data.stats);
+                }
+                
+                updateAgentOutput("Transformations table updated successfully!", "success");
+            })
+            .catch(error => {
+                console.error('Error fetching transformations:', error);
+                updateAgentOutput(`Error fetching transformations: ${error.message}`, "error");
+            });
+    }
+
+    // Function to update recent transformations table
+    function updateRecentTransformationsTable(transformations) {
+        const tableBody = document.querySelector('.table-responsive tbody');
+        if (!tableBody) {
+            updateAgentOutput("Error: Could not find transformations table", "error");
+            return;
+        }
+        
+        // Clear existing rows
+        tableBody.innerHTML = '';
+        
+        if (transformations.length === 0) {
+            // If no transformations, show a message
+            const emptyRow = document.createElement('tr');
+            emptyRow.innerHTML = '<td colspan="7" class="text-center py-4">No transformations found. Try uploading some files!</td>';
+            tableBody.appendChild(emptyRow);
+            updateAgentOutput("No transformations available to display", "info");
+            return;
+        }
+        
+        // Add each transformation to the table
+        transformations.forEach(transform => {
+            const row = document.createElement('tr');
+            
+            // ID cell
+            const idCell = document.createElement('td');
+            idCell.innerHTML = `<span class="badge bg-dark">${transform.id.substring(0, 8)}</span>`;
+            row.appendChild(idCell);
+            
+            // File type cell
+            const fileTypeCell = document.createElement('td');
+            let badgeClass = 'badge bg-secondary';
+            if (transform.file_type === 'xml') badgeClass = 'badge bg-primary';
+            else if (transform.file_type === 'json') badgeClass = 'badge bg-success';
+            else if (transform.file_type === 'csv') badgeClass = 'badge bg-info';
+            fileTypeCell.innerHTML = `<span class="${badgeClass} text-white">${transform.file_type.toUpperCase()}</span>`;
+            row.appendChild(fileTypeCell);
+            
+            // Status cell
+            const statusCell = document.createElement('td');
+            let statusClass = '';
+            let statusIcon = '';
+            if (transform.status === 'completed') {
+                statusClass = 'status-completed';
+                statusIcon = 'fa-check-circle';
+            } else if (transform.status === 'error') {
+                statusClass = 'status-failed';
+                statusIcon = 'fa-times-circle';
+            } else {
+                statusClass = 'status-processing';
+                statusIcon = 'fa-spinner';
+            }
+            statusCell.innerHTML = `<span class="status-badge ${statusClass}"><i class="fas ${statusIcon} me-1"></i>${transform.status}</span>`;
+            row.appendChild(statusCell);
+            
+            // Time cell
+            const timeCell = document.createElement('td');
+            timeCell.textContent = transform.formatted_time || new Date(transform.timestamp * 1000).toLocaleString();
+            row.appendChild(timeCell);
+            
+            // Duration cell
+            const durationCell = document.createElement('td');
+            if (transform.duration) {
+                durationCell.innerHTML = `<span class="fw-bold">${(transform.duration * 1000).toFixed(2)}</span> ms`;
+            } else {
+                durationCell.textContent = 'N/A';
+            }
+            row.appendChild(durationCell);
+            
+            // Size cell
+            const sizeCell = document.createElement('td');
+            sizeCell.textContent = transform.size ? `${transform.size} chars` : 'N/A';
+            row.appendChild(sizeCell);
+            
+            // Actions cell
+            const actionsCell = document.createElement('td');
+            actionsCell.className = 'text-center';
+            actionsCell.innerHTML = `
+                <a href="/comparison/${transform.id}" class="btn btn-sm btn-primary">
+                    <i class="fas fa-eye me-1"></i> View
+                </a>
+                <a href="/download/${transform.id}" class="btn btn-sm btn-outline-secondary ms-2">
+                    <i class="fas fa-download"></i>
+                </a>
+            `;
+            row.appendChild(actionsCell);
+            
+            tableBody.appendChild(row);
+        });
+        
+        updateAgentOutput(`Added ${transformations.length} rows to the transformations table`, "info");
+    }
+
+    // Set up refresh button
+    document.addEventListener('DOMContentLoaded', function() {
+        const refreshBtn = document.getElementById('refresh-btn');
+        if (refreshBtn) {
+            refreshBtn.addEventListener('click', function() {
+                updateAgentOutput("Manual refresh requested...", "info");
+                fetchAndUpdateRecentTransformations();
+            });
+        }
+        
+        // Initial load of transformations
+        setTimeout(() => {
+            fetchAndUpdateRecentTransformations();
+        }, 1000);
+    });
+
+    // Function to update dashboard statistics
+    function updateDashboardStats(stats) {
+        updateAgentOutput("Updating dashboard statistics with new values", "info");
+        
+        if (stats.total !== undefined) {
+            const totalTransformationsElement = document.querySelector('.stat-value:nth-child(1)');
+            if (totalTransformationsElement) {
+                totalTransformationsElement.textContent = stats.total.toLocaleString();
+            }
+        }
+        
+        if (stats.avgTime !== undefined) {
+            const avgTimeElement = document.querySelector('.stat-value:nth-child(3)');
+            if (avgTimeElement) {
+                avgTimeElement.textContent = `${stats.avgTime}s`;
+            }
+        }
+        
+        if (stats.successRate !== undefined) {
+            const successRateElement = document.querySelector('.stat-value:nth-child(4)');
+            if (successRateElement) {
+                successRateElement.textContent = `${stats.successRate}%`;
+            }
+        }
+        
+        updateAgentOutput("Dashboard statistics updated successfully", "success");
+    }
+</script>
+{% endblock %} 

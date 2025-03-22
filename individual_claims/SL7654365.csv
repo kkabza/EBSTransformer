@@ -1,0 +1,2 @@
+ClaimNumber,PolicyNumber,InsuredName,LossDate,GlassRepairCost,GlassType,VendorInvoiceNumber,VehicleMake,VehicleModel,VehicleYear,CustomerPhone,DamageDescription
+SL7654365,PN1122378,Aaron Stewart,2024-04-23,515.50,Rear Window,INV775588,GMC,Acadia,2022,555-123-4611,Significant damage requiring replacement

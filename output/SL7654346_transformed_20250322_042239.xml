@@ -1,0 +1,17 @@
+<?xml version="1.0" ?>
+<Records>
+  <Record>
+    <ClaimNumber>SL7654346</ClaimNumber>
+    <PolicyNumber>PN1122359</PolicyNumber>
+    <InsuredName>Camila Wright</InsuredName>
+    <LossDate>2024-04-04</LossDate>
+    <GlassRepairCost>310.75</GlassRepairCost>
+    <GlassType>Side Window</GlassType>
+    <VendorInvoiceNumber>INV775569</VendorInvoiceNumber>
+    <VehicleMake>Porsche</VehicleMake>
+    <VehicleModel>Macan</VehicleModel>
+    <VehicleYear>2021</VehicleYear>
+    <CustomerPhone>555-123-4592</CustomerPhone>
+    <DamageDescription>Glass completely shattered</DamageDescription>
+  </Record>
+</Records>

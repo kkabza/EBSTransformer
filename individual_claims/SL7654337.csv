@@ -1,0 +1,2 @@
+ClaimNumber,PolicyNumber,InsuredName,LossDate,GlassRepairCost,GlassType,VendorInvoiceNumber,VehicleMake,VehicleModel,VehicleYear,CustomerPhone,DamageDescription
+SL7654337,PN1122350,Alexander Martin,2024-03-26,290.50,Side Window,INV775560,Dodge,Charger,2019,555-123-4583,"Complete break, driver rear"

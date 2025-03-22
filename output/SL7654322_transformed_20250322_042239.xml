@@ -1,0 +1,17 @@
+<?xml version="1.0" ?>
+<Records>
+  <Record>
+    <ClaimNumber>SL7654322</ClaimNumber>
+    <PolicyNumber>PN1122335</PolicyNumber>
+    <InsuredName>Emma Wilson</InsuredName>
+    <LossDate>2024-03-11</LossDate>
+    <GlassRepairCost>275.50</GlassRepairCost>
+    <GlassType>Side Window</GlassType>
+    <VendorInvoiceNumber>INV775545</VendorInvoiceNumber>
+    <VehicleMake>Honda</VehicleMake>
+    <VehicleModel>Civic</VehicleModel>
+    <VehicleYear>2019</VehicleYear>
+    <CustomerPhone>555-123-4568</CustomerPhone>
+    <DamageDescription>Complete shatter from attempted break-in, driver side front</DamageDescription>
+  </Record>
+</Records>

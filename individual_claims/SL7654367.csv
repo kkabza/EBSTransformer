@@ -1,0 +1,2 @@
+ClaimNumber,PolicyNumber,InsuredName,LossDate,GlassRepairCost,GlassType,VendorInvoiceNumber,VehicleMake,VehicleModel,VehicleYear,CustomerPhone,DamageDescription
+SL7654367,PN1122380,Connor Morris,2024-04-25,300.00,Side Window,INV775590,Mercedes-Benz,GLC,2020,555-123-4613,Clean break from parking incident

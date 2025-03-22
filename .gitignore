@@ -1,0 +1,48 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Distribution / packaging
+dist/
+build/
+*.egg-info/
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+
+# Virtual environments
+venv/
+env/
+ENV/
+
+# Local development settings
+.env
+.venv
+.idea/
+.vscode/
+
+# Flask stuff:
+instance/
+.webassets-cache
+
+# Database files
+*.db
+*.sqlite3
+
+# Logs
+logs/
+*.log
+
+# Temporary files
+tmp/
+temp/
+
+# Session files
+flask_session/ 

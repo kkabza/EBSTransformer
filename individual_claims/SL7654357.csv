@@ -1,0 +1,2 @@
+ClaimNumber,PolicyNumber,InsuredName,LossDate,GlassRepairCost,GlassType,VendorInvoiceNumber,VehicleMake,VehicleModel,VehicleYear,CustomerPhone,DamageDescription
+SL7654357,PN1122370,Wyatt Lewis,2024-04-15,415.50,Windshield,INV775580,Volkswagen,Tiguan,2019,555-123-4603,Rock impact with extended cracking

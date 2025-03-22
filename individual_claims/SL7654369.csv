@@ -1,0 +1,2 @@
+ClaimNumber,PolicyNumber,InsuredName,LossDate,GlassRepairCost,GlassType,VendorInvoiceNumber,VehicleMake,VehicleModel,VehicleYear,CustomerPhone,DamageDescription
+SL7654369,PN1122382,Ian Reed,2024-04-27,445.50,Windshield,INV775592,Acura,RDX,2021,555-123-4615,Multiple star breaks requiring replacement

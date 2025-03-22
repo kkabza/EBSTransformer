@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ACORD>
+  <SignonRq>
+    <CustId>
+      <SPName>Test Insurance</SPName>
+      <CustPermId>67890</CustPermId>
+    </CustId>
+    <ClientApp>
+      <Org>Test Management System</Org>
+      <Name>TMS</Name>
+      <Version>1.0.1</Version>
+    </ClientApp>
+  </SignonRq>
+  <InsuranceSvcRq>
+    <RqUID>d8b49c7e-3f12-4e67-b2d1-72a9c8f45823</RqUID>
+    <PolicyNotificationRq>
+      <TransactionRequestDt>2024-03-25T10:15:30</TransactionRequestDt>
+      <CurCd>USD</CurCd>
+      <Producer>
+        <ProducerInfo>
+          <ContractNumber>AGT00123</ContractNumber>
+          <ProducerRoleCd>Agent</ProducerRoleCd>
+          <PersonName>
+            <FirstName>Alice</FirstName>
+            <LastName>Miller</LastName>
+          </PersonName>
+        </ProducerInfo>
+      </Producer>
+      <Policy>
+        <PolicyNumber>POL-5551234</PolicyNumber>
+        <LOBCd>HEALTH</LOBCd>
+      </Policy>
+      <ClaimsNotification>
+        <ClaimsOccurrence>
+          <DateTimeOccurred>2024-03-20T14:30:00</DateTimeOccurred>
+          <ClaimNumber>CLM2024055</ClaimNumber>
+          <LossCauseCd>Illness</LossCauseCd>
+          <ClaimsPayment>
+            <PaymentAmt>2500</PaymentAmt>
+            <ClaimsPaymentCovInfo>
+              <CoverageCd>MedicalExpense</CoverageCd>
+              <DeductibleAmt>750</DeductibleAmt>
+            </ClaimsPaymentCovInfo>
+          </ClaimsPayment>
+          <ClaimsParty>
+            <ClaimsPartyInfo>
+              <PersonName>
+                <FirstName>Michael</FirstName>
+                <LastName>Brown</LastName>
+              </PersonName>
+              <ClaimsPartyTypeCd>Insured</ClaimsPartyTypeCd>
+            </ClaimsPartyInfo>
+          </ClaimsParty>
+        </ClaimsOccurrence>
+      </ClaimsNotification>
+    </PolicyNotificationRq>
+  </InsuranceSvcRq>
+</ACORD> 

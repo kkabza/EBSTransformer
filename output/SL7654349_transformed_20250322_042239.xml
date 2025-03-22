@@ -1,0 +1,17 @@
+<?xml version="1.0" ?>
+<Records>
+  <Record>
+    <ClaimNumber>SL7654349</ClaimNumber>
+    <PolicyNumber>PN1122362</PolicyNumber>
+    <InsuredName>Jackson Green</InsuredName>
+    <LossDate>2024-04-07</LossDate>
+    <GlassRepairCost>295.50</GlassRepairCost>
+    <GlassType>Side Window</GlassType>
+    <VendorInvoiceNumber>INV775572</VendorInvoiceNumber>
+    <VehicleMake>Toyota</VehicleMake>
+    <VehicleModel>RAV4</VehicleModel>
+    <VehicleYear>2019</VehicleYear>
+    <CustomerPhone>555-123-4595</CustomerPhone>
+    <DamageDescription>Single break requiring full replacement</DamageDescription>
+  </Record>
+</Records>

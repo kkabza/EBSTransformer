@@ -1,0 +1,17 @@
+<?xml version="1.0" ?>
+<Records>
+  <Record>
+    <ClaimNumber>SL7654338</ClaimNumber>
+    <PolicyNumber>PN1122351</PolicyNumber>
+    <InsuredName>Evelyn Thompson</InsuredName>
+    <LossDate>2024-03-27</LossDate>
+    <GlassRepairCost>525.75</GlassRepairCost>
+    <GlassType>Rear Window</GlassType>
+    <VendorInvoiceNumber>INV775561</VendorInvoiceNumber>
+    <VehicleMake>GMC</VehicleMake>
+    <VehicleModel>Terrain</VehicleModel>
+    <VehicleYear>2020</VehicleYear>
+    <CustomerPhone>555-123-4584</CustomerPhone>
+    <DamageDescription>Impact damage requiring full replacement</DamageDescription>
+  </Record>
+</Records>

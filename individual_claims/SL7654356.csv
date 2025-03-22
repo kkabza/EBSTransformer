@@ -1,0 +1,2 @@
+ClaimNumber,PolicyNumber,InsuredName,LossDate,GlassRepairCost,GlassType,VendorInvoiceNumber,VehicleMake,VehicleModel,VehicleYear,CustomerPhone,DamageDescription
+SL7654356,PN1122369,Hannah Rodriguez,2024-04-14,525.25,Rear Window,INV775579,Mazda,CX-9,2020,555-123-4602,Full rear window replacement needed

@@ -1,0 +1,2 @@
+ClaimNumber,PolicyNumber,InsuredName,LossDate,GlassRepairCost,GlassType,VendorInvoiceNumber,VehicleMake,VehicleModel,VehicleYear,CustomerPhone,DamageDescription
+SL7654362,PN1122375,Audrey Evans,2024-04-20,550.75,Rear Window,INV775585,Jeep,Grand Cherokee,2019,555-123-4608,Multiple impacts from hail storm

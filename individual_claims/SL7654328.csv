@@ -1,0 +1,2 @@
+ClaimNumber,PolicyNumber,InsuredName,LossDate,GlassRepairCost,GlassType,VendorInvoiceNumber,VehicleMake,VehicleModel,VehicleYear,CustomerPhone,DamageDescription
+SL7654328,PN1122341,Ava Thomas,2024-03-17,280.25,Side Window,INV775551,Hyundai,Sonata,2019,555-123-4574,"Vandalism damage, driver side rear"

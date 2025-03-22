@@ -1,0 +1,2 @@
+ClaimNumber,PolicyNumber,InsuredName,LossDate,GlassRepairCost,GlassType,VendorInvoiceNumber,VehicleMake,VehicleModel,VehicleYear,CustomerPhone,DamageDescription
+SL7654360,PN1122373,Nora Campbell,2024-04-18,425.25,Windshield,INV775583,Lexus,RX,2022,555-123-4606,Highway debris caused significant damage

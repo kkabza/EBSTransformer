@@ -1,0 +1,2 @@
+ClaimNumber,PolicyNumber,InsuredName,LossDate,GlassRepairCost,GlassType,VendorInvoiceNumber,VehicleMake,VehicleModel,VehicleYear,CustomerPhone,DamageDescription
+SL7654363,PN1122376,Nathan Edwards,2024-04-21,430.00,Windshield,INV775586,Chrysler,300,2021,555-123-4609,Long diagonal crack from impact

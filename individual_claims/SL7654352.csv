@@ -1,0 +1,2 @@
+ClaimNumber,PolicyNumber,InsuredName,LossDate,GlassRepairCost,GlassType,VendorInvoiceNumber,VehicleMake,VehicleModel,VehicleYear,CustomerPhone,DamageDescription
+SL7654352,PN1122365,Riley Nelson,2024-04-10,315.25,Side Window,INV775575,Chevrolet,Malibu,2021,555-123-4598,Shattered glass from side impact

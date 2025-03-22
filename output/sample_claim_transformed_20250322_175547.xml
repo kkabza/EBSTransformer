@@ -1,0 +1,83 @@
+<?xml version="1.0" ?>
+<Root>
+  <policyInfo>
+    <policyNumber>POL-8675309</policyNumber>
+    <effectiveDate>2025-01-15</effectiveDate>
+    <expirationDate>2026-01-15</expirationDate>
+    <policyType>AUTO</policyType>
+    <totalPremium>1250.75</totalPremium>
+    <status>ACTIVE</status>
+  </policyInfo>
+  <insured>
+    <firstName>Jennifer</firstName>
+    <lastName>Wilson</lastName>
+    <dob>1985-06-22</dob>
+    <address>
+      <street>123 Main Street</street>
+      <city>Springfield</city>
+      <state>IL</state>
+      <zipCode>62701</zipCode>
+    </address>
+    <contactInfo>
+      <email>jwilson@example.com</email>
+      <phone>555-123-4567</phone>
+    </contactInfo>
+    <driverLicense>IL9876543</driverLicense>
+  </insured>
+  <vehicles>
+    <Item>
+      <vin>1HGCM82633A004352</vin>
+      <make>Honda</make>
+      <model>Accord</model>
+      <year>2022</year>
+      <coverage>
+        <liability>300000</liability>
+        <collision>
+          <limit>25000</limit>
+          <deductible>500</deductible>
+        </collision>
+        <comprehensive>
+          <limit>25000</limit>
+          <deductible>250</deductible>
+        </comprehensive>
+        <uninsuredMotorist>100000</uninsuredMotorist>
+      </coverage>
+    </Item>
+  </vehicles>
+  <claim>
+    <claimNumber>CLM-2025-0342</claimNumber>
+    <dateOfLoss>2025-03-10</dateOfLoss>
+    <reportedDate>2025-03-11</reportedDate>
+    <lossType>COLLISION</lossType>
+    <status>OPEN</status>
+    <description>Vehicle rear-ended at traffic light on Main St.</description>
+    <estimatedDamage>4235.89</estimatedDamage>
+    <location>
+      <street>Main Street and 5th Avenue</street>
+      <city>Springfield</city>
+      <state>IL</state>
+      <zipCode>62701</zipCode>
+    </location>
+  </claim>
+  <parties>
+    <Item>
+      <type>CLAIMANT</type>
+      <firstName>Jennifer</firstName>
+      <lastName>Wilson</lastName>
+      <role>INSURED</role>
+    </Item>
+    <Item>
+      <type>THIRD_PARTY</type>
+      <firstName>Michael</firstName>
+      <lastName>Thompson</lastName>
+      <role>OTHER_DRIVER</role>
+      <contactInfo>
+        <phone>555-987-6543</phone>
+      </contactInfo>
+      <insuranceInfo>
+        <company>State Insurance Group</company>
+        <policyNumber>SIG-5551212</policyNumber>
+      </insuranceInfo>
+    </Item>
+  </parties>
+</Root>

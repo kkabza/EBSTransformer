@@ -1,0 +1,17 @@
+<?xml version="1.0" ?>
+<Records>
+  <Record>
+    <ClaimNumber>SL7654343</ClaimNumber>
+    <PolicyNumber>PN1122356</PolicyNumber>
+    <InsuredName>Matthew Hall</InsuredName>
+    <LossDate>2024-04-01</LossDate>
+    <GlassRepairCost>285.00</GlassRepairCost>
+    <GlassType>Side Window</GlassType>
+    <VendorInvoiceNumber>INV775566</VendorInvoiceNumber>
+    <VehicleMake>Infiniti</VehicleMake>
+    <VehicleModel>Q50</VehicleModel>
+    <VehicleYear>2018</VehicleYear>
+    <CustomerPhone>555-123-4589</CustomerPhone>
+    <DamageDescription>Single impact break, clean replacement</DamageDescription>
+  </Record>
+</Records>
