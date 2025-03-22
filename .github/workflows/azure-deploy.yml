@@ -68,7 +68,7 @@ jobs:
             },
             {
               "name": "FLASK_APP",
-              "value": "app.py",
+              "value": "wsgi.py",
               "slotSetting": false
             },
             {
@@ -85,7 +85,7 @@ jobs:
         general-settings-json: |
           {
             "linuxFxVersion": "PYTHON|3.10",
-            "appCommandLine": "gunicorn --bind=0.0.0.0:8000 azure_app:app"
+            "appCommandLine": "gunicorn --log-level debug --bind=0.0.0.0:8000 wsgi:app"
           }
       env:
         AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }} 

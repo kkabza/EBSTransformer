@@ -1,4 +1,8 @@
-from app import app
+# Import the Flask application and export it as 'app'
+from application import flask_app as app
 
-if __name__ == "__main__":
-    app.run(host='0.0.0.0', port=8000) 
+# This is the entry point for Gunicorn
+# The 'app' variable is what Gunicorn will look for
+
+if __name__ == '__main__':
+    app.run() 
