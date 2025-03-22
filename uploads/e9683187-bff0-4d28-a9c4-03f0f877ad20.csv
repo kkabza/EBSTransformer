@@ -1,2 +1,0 @@
-ClaimNumber,PolicyNumber,InsuredName,LossDate,GlassRepairCost,GlassType,VendorInvoiceNumber,VehicleMake,VehicleModel,VehicleYear,CustomerPhone,DamageDescription
-SL7654330,PN1122343,Isabella Rodriguez,2024-03-19,405.00,Windshield,INV775553,Mazda,CX-5,2018,555-123-4576,"Stress crack from temperature changes, no impact point"

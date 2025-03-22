@@ -1,12 +1,70 @@
-# Byte-compiled / optimized / DLL files
+# Python
 __pycache__/
 *.py[cod]
 *$py.class
-
-# Distribution / packaging
-dist/
+*.so
+.Python
+env/
 build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
 *.egg-info/
+.installed.cfg
+*.egg
+
+# Flask
+instance/
+.webassets-cache
+
+# Environments
+.env
+.env.new
+venv/
+ENV/
+.venv
+env.bak/
+venv.bak/
+
+# IDEs and editors
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.project
+.pydevproject
+.settings/
+
+# Application
+*.log
+debug.log
+app.log
+uploads/*
+!uploads/.gitkeep
+schema_uploads/*
+!schema_uploads/.gitkeep
+traces/*
+!traces/.gitkeep
+
+# Azure deployment
+app.zip
+new_app.zip
+test_app.zip
+*.pyc
+node_modules/
+AzureCLI.msi
+
+# Operating system files
+.DS_Store
+Thumbs.db
 
 # Unit test / coverage reports
 htmlcov/
@@ -17,20 +75,11 @@ htmlcov/
 nosetests.xml
 coverage.xml
 
-# Virtual environments
-venv/
-env/
-ENV/
-
 # Local development settings
 .env
 .venv
 .idea/
 .vscode/
-
-# Flask stuff:
-instance/
-.webassets-cache
 
 # Database files
 *.db

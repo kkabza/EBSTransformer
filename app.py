@@ -10,6 +10,9 @@ import csv
 import io
 import difflib
 import shutil
+import logging
+from werkzeug.utils import secure_filename
+import re
 
 app = Flask(__name__)
 app.secret_key = os.environ.get('SECRET_KEY', 'dev_key_for_testing_only')
@@ -95,9 +98,44 @@ def visualization():
     """
     return redirect(url_for('metrics'))
 
+@app.route('/transformations')
+def transformations():
+    """
+    Display documentation about available transformations
+    """
+    return render_template('transformations.html', page_title="Transformations", active_page="transformations")
+
+@app.route('/architecture')
+def architecture():
+    """
+    Redirect to the POC architecture page
+    """
+    return redirect(url_for('poc_architecture'))
+
+@app.route('/azure-design')
+def azure_design():
+    return render_template('azure_design.html')
+
+@app.route('/poc-architecture')
+def poc_architecture():
+    """
+    Display POC architecture details
+    """
+    return render_template('poc_architecture.html', page_title="POC Architecture", active_page="poc-architecture")
+
+@app.route('/biztalk-comparison')
+def biztalk_comparison():
+    """
+    Display ESB architecture benefits
+    """
+    return render_template('biztalk_comparison.html', page_title="ESB Architecture Benefits", active_page="biztalk-comparison")
+
 @app.route('/documentation')
 def documentation():
-    return render_template('documentation.html')
+    """
+    Legacy route - redirect to transformations
+    """
+    return redirect(url_for('transformations'))
 
 @app.route('/schemas')
 def schemas():
@@ -151,6 +189,13 @@ def metrics():
 def about():
     return render_template('about.html')
 
+@app.route('/llm-agent')
+def llm_agent():
+    """
+    Render the LLM agent description page
+    """
+    return render_template('llm_agent.html', page_title="LLM Agent Details", active_page="llm-agent")
+
 @app.route('/upload', methods=['POST'])
 def upload_file():
     if 'file' not in request.files:
@@ -159,6 +204,9 @@ def upload_file():
     files = request.files.getlist('file')
     if not files or files[0].filename == '':
         return jsonify({'error': 'No selected file'})
+    
+    # Generate a batch ID for this upload
+    batch_id = str(uuid.uuid4())
     
     # Process all files
     result_ids = []
@@ -216,10 +264,10 @@ def upload_file():
             with open(result_filepath, 'w', encoding='utf-8') as f:
                 f.write(result_content)
             
-            # Save a copy of the transformed file to the output folder with a descriptive name
+            # Save a copy of the transformed file to the output folder with a descriptive name and batch ID
             original_filename = file.filename
             base_filename = os.path.splitext(original_filename)[0]
-            output_filename = f"{base_filename}_transformed_{datetime.now().strftime('%Y%m%d_%H%M%S')}.{result_type}"
+            output_filename = f"{base_filename}_transformed_{batch_id}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.{result_type}"
             output_filepath = os.path.join(OUTPUT_FOLDER, output_filename)
             with open(output_filepath, 'w', encoding='utf-8') as f:
                 f.write(result_content)
@@ -255,7 +303,9 @@ def upload_file():
                 'validation_result': None,  # Add validation here if needed
                 'processing_date': datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
                 'output_filename': output_filename,
-                'output_filepath': output_filepath
+                'output_filepath': output_filepath,
+                'batch_id': batch_id,  # Add batch ID to track grouped files
+                'original_filename': original_filename
             }
             
             processed_count += 1
@@ -271,7 +321,8 @@ def upload_file():
                 'status': 'error',
                 'timestamp': time.time(),
                 'file_type': file_ext,
-                'error': str(e)
+                'error': str(e),
+                'batch_id': batch_id  # Add batch ID even for error results
             }
     
     # After processing all files, redirect to batch results page if multiple files,
@@ -290,7 +341,6 @@ def upload_file():
             return redirect(f'/comparison/{result_ids[0]}')
         else:
             # For multiple files, redirect to batch results page
-            batch_id = str(uuid.uuid4())
             return redirect(f'/batch-results/{",".join(result_ids)}')
     else:
         # For AJAX, return JSON response
@@ -321,6 +371,41 @@ def comparison_view(result_id):
     validation_result = result.get('validation_result')
     processing_date = result.get('processing_date', datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
     output_filename = result.get('output_filename', '')
+    batch_id = result.get('batch_id', '')
+    
+    # Get batch navigation information
+    batch_files = []
+    prev_id = None
+    next_id = None
+    current_index = -1
+    
+    if batch_id:
+        # Get all results from this batch
+        batch_files = [(rid, r) for rid, r in transformation_results.items() 
+                       if r.get('batch_id') == batch_id and r.get('status') == 'completed']
+        
+        # Sort by original filename or timestamp
+        batch_files.sort(key=lambda x: x[1].get('original_filename', '') or str(x[1].get('timestamp', 0)))
+        
+        # Find current position in batch
+        for i, (rid, _) in enumerate(batch_files):
+            if rid == result_id:
+                current_index = i
+                break
+        
+        # Get previous and next IDs
+        if current_index > 0:
+            prev_id = batch_files[current_index - 1][0]
+        if current_index < len(batch_files) - 1:
+            next_id = batch_files[current_index + 1][0]
+    
+    # Get batch summary info
+    batch_info = {
+        'id': batch_id,
+        'count': len(batch_files),
+        'current_index': current_index + 1 if current_index >= 0 else 0,
+        'processing_date': processing_date
+    }
     
     return render_template(
         'result_comparison.html',
@@ -333,7 +418,10 @@ def comparison_view(result_id):
         changes=changes,
         validation_result=validation_result,
         processing_date=processing_date,
-        output_filename=output_filename
+        output_filename=output_filename,
+        batch_info=batch_info,
+        prev_id=prev_id,
+        next_id=next_id
     )
 
 @app.route('/download/<result_id>')
@@ -519,10 +607,16 @@ def batch_results(result_ids):
     results = []
     total_duration = 0
     processed_count = 0
+    first_valid_result_id = None
     
     for result_id in result_id_list:
         if result_id in transformation_results and transformation_results[result_id]['status'] == 'completed':
             result = transformation_results[result_id]
+            
+            # Save the first valid result ID for redirection
+            if first_valid_result_id is None:
+                first_valid_result_id = result_id
+                
             results.append({
                 'status': result['status'],
                 'duration': result['duration'],
@@ -539,6 +633,11 @@ def batch_results(result_ids):
     
     # Calculate summary statistics
     avg_duration = total_duration / processed_count if processed_count > 0 else 0
+    
+    # Check if this is a direct view request 
+    # The "view_first" parameter will be added to buttons that should redirect to first file
+    if request.args.get('view_first') and first_valid_result_id:
+        return redirect(url_for('comparison_view', result_id=first_valid_result_id))
     
     return render_template('batch_results.html', 
                           results=results, 
@@ -938,6 +1037,386 @@ def upload_schema():
     flash(f'Schema "{schema_name}" uploaded successfully', 'success')
     
     return redirect(url_for('schemas'))
+
+@app.route('/schemas/view/<schema_id>')
+def view_schema(schema_id):
+    """
+    Return the content of a schema for viewing in the UI
+    """
+    schema_content = ""
+    schema_title = ""
+    
+    # Check the schema ID and retrieve the appropriate content
+    try:
+        if schema_id == 'iso_claim':
+            try:
+                example_path = os.path.join(app.root_path, 'examples', 'iso_claim.xsd')
+                if os.path.exists(example_path):
+                    with open(example_path, 'r', encoding='utf-8') as f:
+                        schema_content = f.read()
+                    schema_title = "ISO Standard Claim Schema"
+                else:
+                    schema_content = "Schema file not found"
+            except Exception as e:
+                schema_content = f"Error reading schema file: {str(e)}"
+                
+        elif schema_id == 'safelite_batch':
+            try:
+                example_path = os.path.join(app.root_path, 'examples', 'sample_safelite_batch.xml')
+                if os.path.exists(example_path):
+                    with open(example_path, 'r', encoding='utf-8') as f:
+                        schema_content = f.read()
+                    schema_title = "Safelite Claims Batch Schema"
+                else:
+                    schema_content = "Schema file not found"
+            except Exception as e:
+                schema_content = f"Error reading schema file: {str(e)}"
+                
+        elif schema_id == 'legacy_claim':
+            try:
+                example_path = os.path.join(app.root_path, 'examples', 'sample_iso_claim.xml')
+                if os.path.exists(example_path):
+                    with open(example_path, 'r', encoding='utf-8') as f:
+                        schema_content = f.read()
+                    schema_title = "Legacy XML Claim Schema"
+                else:
+                    schema_content = "Schema file not found"
+            except Exception as e:
+                schema_content = f"Error reading schema file: {str(e)}"
+        
+        elif schema_id == 'json_standard':
+            schema_content = """
+{
+  "type": "object",
+  "properties": {
+    "claim": {
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "claimDate": { "type": "string", "format": "date" },
+        "insuredName": { "type": "string" },
+        "policyNumber": { "type": "string" },
+        "status": { "type": "string", "enum": ["open", "closed", "pending"] }
+      },
+      "required": ["id", "claimDate", "insuredName"]
+    }
+  }
+}
+            """
+            schema_title = "JSON Standard Format Schema"
+            
+        elif schema_id == 'csv_template':
+            schema_content = """
+ClaimID,ClaimDate,InsuredName,PolicyNumber,Status,LossAmount,Coverage
+CLMX001,2023-10-15,John Smith,POL123456,open,5000.00,Comprehensive
+CLMX002,2023-10-16,Jane Doe,POL789012,pending,7500.00,Collision
+            """
+            schema_title = "CSV Import Template Schema"
+            
+        else:
+            return jsonify({
+                'error': 'Invalid schema ID'
+            }), 400
+    except Exception as e:
+        logging.error(f"Error viewing schema: {e}")
+        return jsonify({
+            'error': str(e)
+        }), 500
+        
+    return jsonify({
+        'title': schema_title,
+        'content': schema_content
+    })
+
+@app.route('/schemas/download/<schema_id>')
+def download_schema(schema_id):
+    """
+    Allow downloading a schema file
+    """
+    try:
+        if schema_id == 'iso_claim':
+            example_path = os.path.join(app.root_path, 'examples', 'iso_claim.xsd')
+            if os.path.exists(example_path):
+                return send_file(example_path, as_attachment=True, download_name='iso_claim.xsd')
+            else:
+                flash('Schema file not found', 'error')
+                
+        elif schema_id == 'safelite_batch':
+            example_path = os.path.join(app.root_path, 'examples', 'sample_safelite_batch.xml')
+            if os.path.exists(example_path):
+                return send_file(example_path, as_attachment=True, download_name='safelite_batch.xml')
+            else:
+                flash('Schema file not found', 'error')
+                
+        elif schema_id == 'legacy_claim':
+            example_path = os.path.join(app.root_path, 'examples', 'sample_iso_claim.xml')
+            if os.path.exists(example_path):
+                return send_file(example_path, as_attachment=True, download_name='legacy_claim.xml')
+            else:
+                flash('Schema file not found', 'error')
+                
+        elif schema_id == 'json_standard':
+            # Create a temp file for JSON schema
+            temp_path = os.path.join(app.root_path, 'temp_json_schema.json')
+            with open(temp_path, 'w', encoding='utf-8') as f:
+                f.write("""
+{
+  "type": "object",
+  "properties": {
+    "claim": {
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "claimDate": { "type": "string", "format": "date" },
+        "insuredName": { "type": "string" },
+        "policyNumber": { "type": "string" },
+        "status": { "type": "string", "enum": ["open", "closed", "pending"] }
+      },
+      "required": ["id", "claimDate", "insuredName"]
+    }
+  }
+}
+                """)
+            return send_file(temp_path, as_attachment=True, download_name='json_standard.json')
+            
+        elif schema_id == 'csv_template':
+            # Create a temp file for CSV template
+            temp_path = os.path.join(app.root_path, 'temp_csv_template.csv')
+            with open(temp_path, 'w', encoding='utf-8') as f:
+                f.write("""ClaimID,ClaimDate,InsuredName,PolicyNumber,Status,LossAmount,Coverage
+CLMX001,2023-10-15,John Smith,POL123456,open,5000.00,Comprehensive
+CLMX002,2023-10-16,Jane Doe,POL789012,pending,7500.00,Collision""")
+            return send_file(temp_path, as_attachment=True, download_name='csv_template.csv')
+            
+        else:
+            flash('Invalid schema ID', 'error')
+        
+    except Exception as e:
+        logging.error(f"Error downloading schema: {e}")
+        flash(f'Error downloading schema: {str(e)}', 'error')
+        
+    return redirect(url_for('schemas'))
+
+@app.route('/outputs')
+def outputs():
+    """
+    Display the output files page showing all transformed files
+    """
+    try:
+        # Get all files in the output directory
+        output_dir = os.path.join(app.root_path, 'output')
+        files = []
+        transformations = {}
+        
+        if os.path.exists(output_dir):
+            for filename in os.listdir(output_dir):
+                file_path = os.path.join(output_dir, filename)
+                if os.path.isfile(file_path):
+                    # Get file stats
+                    file_stats = os.stat(file_path)
+                    modified_time = datetime.fromtimestamp(file_stats.st_mtime)
+                    size_bytes = file_stats.st_size
+                    
+                    # Format the size
+                    if size_bytes < 1024:
+                        size_str = f"{size_bytes} bytes"
+                    elif size_bytes < 1024 * 1024:
+                        size_str = f"{size_bytes / 1024:.1f} KB"
+                    else:
+                        size_str = f"{size_bytes / (1024 * 1024):.1f} MB"
+                    
+                    # Extract batch ID (if present)
+                    # Expected format: name_transformed_[BATCH_ID]_[TIMESTAMP].[EXTENSION]
+                    batch_id = "ungrouped"
+                    
+                    # Try to find a UUID pattern in the filename which would indicate a batch ID
+                    uuid_pattern = re.compile(r'[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}')
+                    uuid_matches = uuid_pattern.findall(filename)
+                    
+                    if uuid_matches and len(uuid_matches) > 0:
+                        # Use the first UUID as the batch ID
+                        batch_id = uuid_matches[0]
+                    
+                    # Get original filename (remove transformation suffix)
+                    original_filename = filename
+                    if "_transformed_" in filename:
+                        parts = filename.split("_transformed_")
+                        if len(parts) > 0:
+                            original_filename = parts[0] + "." + filename.split(".")[-1]
+                    
+                    file_info = {
+                        'name': filename,
+                        'original_name': original_filename,
+                        'path': file_path,
+                        'size': size_str,
+                        'modified': modified_time.strftime('%Y-%m-%d %H:%M:%S'),
+                        'bytes': size_bytes,
+                        'batch_id': batch_id
+                    }
+                    
+                    files.append(file_info)
+                    
+                    # Group by batch ID
+                    if batch_id not in transformations:
+                        # Try to find more information about this batch from transformation_results
+                        batch_info = {
+                            'id': batch_id,
+                            'files': [],
+                            'latest_modified': modified_time,
+                            'total_size_bytes': 0,
+                            'file_count': 0,
+                            'date': modified_time.strftime('%Y-%m-%d'),
+                            'time': modified_time.strftime('%H:%M:%S')
+                        }
+                        
+                        # Look up additional info about this batch
+                        for result_id, result in transformation_results.items():
+                            if result.get('batch_id') == batch_id:
+                                batch_info['schema_path'] = result.get('schema_path', 'Unknown Schema')
+                                batch_info['processing_date'] = result.get('processing_date', batch_info['date'])
+                                break
+                        
+                        transformations[batch_id] = batch_info
+                    
+                    transformations[batch_id]['files'].append(file_info)
+                    transformations[batch_id]['total_size_bytes'] += size_bytes
+                    transformations[batch_id]['file_count'] += 1
+                    
+                    # Update the latest modification time for the group
+                    if modified_time > transformations[batch_id]['latest_modified']:
+                        transformations[batch_id]['latest_modified'] = modified_time
+        
+        # Sort files by modification time (newest first)
+        files.sort(key=lambda x: x['modified'], reverse=True)
+        
+        # Format transformation groups for display
+        transformation_groups = []
+        for batch_id, batch_info in transformations.items():
+            # Format the total size
+            total_size_bytes = batch_info['total_size_bytes']
+            if total_size_bytes < 1024:
+                total_size_str = f"{total_size_bytes} bytes"
+            elif total_size_bytes < 1024 * 1024:
+                total_size_str = f"{total_size_bytes / 1024:.1f} KB"
+            else:
+                total_size_str = f"{total_size_bytes / (1024 * 1024):.1f} MB"
+            
+            # Sort files within each group by modified time (newest first)
+            batch_info['files'].sort(key=lambda x: x['modified'], reverse=True)
+            
+            group_name = f"Batch {batch_info['date']} - {batch_info['time']}"
+            if 'processing_date' in batch_info:
+                group_name = f"Batch {batch_info['processing_date']}"
+                
+            if batch_id == 'ungrouped':
+                group_name = "Ungrouped Files"
+            else:
+                # Add the batch ID (first 8 characters) to the group name to ensure uniqueness
+                short_id = batch_id[:8]
+                
+                # Determine if this is an output batch based on filenames
+                is_output_batch = any("_transformed_" in file['name'] for file in batch_info['files'])
+                if is_output_batch:
+                    group_name = f"Output {group_name}"
+                else:
+                    group_name = f"Source {group_name}"
+            
+            transformation_groups.append({
+                'id': batch_id,
+                'name': group_name,
+                'files': batch_info['files'],
+                'latest_modified': batch_info['latest_modified'].strftime('%Y-%m-%d %H:%M:%S'),
+                'total_size': total_size_str,
+                'file_count': batch_info['file_count'],
+                'is_ungrouped': batch_id == 'ungrouped',
+                'is_output': any("_transformed_" in file['name'] for file in batch_info['files'])
+            })
+        
+        # Sort transformation groups by latest modified time (newest first)
+        transformation_groups.sort(key=lambda x: x['latest_modified'], reverse=True)
+        
+        # Move ungrouped to the end if it exists
+        for i, group in enumerate(transformation_groups):
+            if group['is_ungrouped']:
+                ungrouped = transformation_groups.pop(i)
+                transformation_groups.append(ungrouped)
+                break
+        
+        return render_template('outputs.html', 
+                              files=files, 
+                              transformation_groups=transformation_groups,
+                              page_title="Output Files", 
+                              active_page="outputs")
+    except Exception as e:
+        logging.error(f"Error loading outputs page: {e}")
+        return render_template('outputs.html', 
+                              files=[], 
+                              transformation_groups=[],
+                              page_title="Output Files", 
+                              active_page="outputs",
+                              error=str(e))
+
+@app.route('/outputs/view')
+def view_output_file():
+    """
+    Return the content of an output file for viewing in the UI
+    """
+    try:
+        file_path = request.args.get('file', '')
+        
+        # Security check: ensure the file is in the output directory
+        output_dir = os.path.abspath(os.path.join(app.root_path, 'output'))
+        abs_file_path = os.path.abspath(file_path)
+        
+        if not abs_file_path.startswith(output_dir):
+            return jsonify({
+                'error': 'Invalid file path. Must be in the output directory.'
+            }), 400
+        
+        if not os.path.exists(abs_file_path):
+            return jsonify({
+                'error': 'File not found'
+            }), 404
+        
+        with open(abs_file_path, 'r', encoding='utf-8') as f:
+            content = f.read()
+        
+        return jsonify({
+            'filename': os.path.basename(abs_file_path),
+            'content': content
+        })
+    except Exception as e:
+        logging.error(f"Error viewing output file: {e}")
+        return jsonify({
+            'error': str(e)
+        }), 500
+
+@app.route('/outputs/download')
+def download_output_file():
+    """
+    Download an output file
+    """
+    try:
+        file = request.args.get('file', '')
+        
+        # Security check: ensure the file is in the output directory
+        output_dir = os.path.abspath(os.path.join(app.root_path, 'output'))
+        file_path = os.path.join(output_dir, file)
+        abs_file_path = os.path.abspath(file_path)
+        
+        if not abs_file_path.startswith(output_dir):
+            flash('Invalid file path. Must be in the output directory.', 'error')
+            return redirect(url_for('outputs'))
+        
+        if not os.path.exists(abs_file_path):
+            flash('File not found', 'error')
+            return redirect(url_for('outputs'))
+        
+        return send_file(abs_file_path, as_attachment=True)
+    except Exception as e:
+        logging.error(f"Error downloading output file: {e}")
+        flash(f'Error downloading file: {str(e)}', 'error')
+        return redirect(url_for('outputs'))
 
 if __name__ == '__main__':
     app.run(debug=True) 

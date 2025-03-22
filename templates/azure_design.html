@@ -1,0 +1,415 @@
+{% extends 'base.html' %}
+
+{% block title %}ESB Transformation Service - Azure Design{% endblock %}
+
+{% block head %}
+{{ super() }}
+<style>
+  .architecture-diagram {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  .feature-card {
+    height: 100%;
+    transition: transform 0.3s;
+  }
+  
+  .feature-card:hover {
+    transform: translateY(-5px);
+  }
+  
+  .service-icon {
+    font-size: 2.5rem;
+    margin-bottom: 15px;
+    color: #0078d4;
+  }
+  
+  .bg-azure-blue {
+    background-color: #0078d4;
+    color: white;
+  }
+  
+  .text-azure-blue {
+    color: #0078d4;
+  }
+</style>
+{% endblock %}
+
+{% block page_title %}
+<div class="d-flex align-items-center">
+  <div>
+    <i class="material-icons-outlined align-middle me-2 fs-2">cloud</i>
+  </div>
+  <div>
+    <h3 class="mb-0">Azure Design</h3>
+    <p class="text-secondary mb-0">Cloud architecture for ESB Transformer deployment in Azure</p>
+  </div>
+</div>
+{% endblock %}
+
+{% block content %}
+<!-- Overview Section -->
+<div class="card mb-4 border rounded-4">
+  <div class="card-header bg-primary text-white">
+    <h5 class="mb-0"><i class="material-icons-outlined me-2">info</i>Overview</h5>
+  </div>
+  <div class="card-body">
+    <p>The ESB Transformation Service is designed to be deployed as a containerized application in Azure, leveraging cloud-native services for scalability, security, and reliability. This architecture minimizes complexity while enabling enterprise-grade features.</p>
+    
+    <div class="text-center my-5">
+      <!-- Placeholder for the architecture diagram -->
+      <div class="border rounded p-4 mb-3 bg-light">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 450" class="architecture-diagram">
+          <!-- Azure Event Hub -->
+          <rect x="100" y="100" width="150" height="80" rx="10" fill="#0078d4" />
+          <text x="175" y="145" font-size="16" fill="white" text-anchor="middle">Azure Event Hub</text>
+          
+          <!-- Event Hubs Arrows -->
+          <path d="M250 140 L350 140" stroke="#666" stroke-width="2" fill="none" />
+          <polygon points="345,135 360,140 345,145" fill="#666" />
+          
+          <!-- ACI Container Group -->
+          <rect x="360" y="60" width="280" height="160" rx="10" fill="#d1e8ff" stroke="#0078d4" stroke-width="2" />
+          <text x="500" y="80" font-size="16" fill="#0078d4" text-anchor="middle">Azure Container Instances</text>
+          
+          <!-- Container 1 -->
+          <rect x="380" y="100" width="100" height="100" rx="10" fill="#4fc3f7" />
+          <text x="430" y="150" font-size="14" fill="white" text-anchor="middle">ESB App</text>
+          
+          <!-- Container 2 -->
+          <rect x="500" y="100" width="100" height="100" rx="10" fill="#4fc3f7" />
+          <text x="550" y="150" font-size="14" fill="white" text-anchor="middle">ESB App</text>
+          
+          <!-- Azure Blob Storage -->
+          <rect x="500" y="280" width="150" height="80" rx="10" fill="#773adc" />
+          <text x="575" y="325" font-size="16" fill="white" text-anchor="middle">Azure Blob Storage</text>
+          
+          <!-- Storage connection -->
+          <path d="M500 180 L500 280" stroke="#666" stroke-width="2" fill="none" />
+          <polygon points="495,275 500,290 505,275" fill="#666" />
+          
+          <!-- Azure Cognitive Services -->
+          <rect x="700" y="100" width="200" height="80" rx="10" fill="#01b8aa" />
+          <text x="800" y="145" font-size="16" fill="white" text-anchor="middle">Azure OpenAI Service</text>
+          
+          <!-- Cognitive Services connection -->
+          <path d="M640 140 L700 140" stroke="#666" stroke-width="2" fill="none" />
+          <polygon points="695,135 710,140 695,145" fill="#666" />
+          
+          <!-- Output arrow -->
+          <path d="M550 200 L550 280" stroke="#666" stroke-width="2" fill="none" />
+          <polygon points="545,275 550,290 555,275" fill="#666" />
+          
+          <!-- Azure Key Vault -->
+          <rect x="500" y="10" width="150" height="40" rx="5" fill="#f25022" />
+          <text x="575" y="35" font-size="16" fill="white" text-anchor="middle">Azure Key Vault</text>
+          
+          <!-- Key Vault connection -->
+          <path d="M525 50 L525 60" stroke="#666" stroke-width="2" fill="none" />
+          <path d="M575 50 L575 60" stroke="#666" stroke-width="2" fill="none" />
+          
+          <!-- Azure Front Door -->
+          <rect x="360" y="350" width="280" height="60" rx="10" fill="#0078d4" />
+          <text x="500" y="385" font-size="16" fill="white" text-anchor="middle">Azure Front Door / API Management</text>
+          
+          <!-- Front Door connection -->
+          <path d="M500 350 L500 320" stroke="#666" stroke-width="2" fill="none" />
+          <path d="M550 350 L550 360" stroke="#666" stroke-width="2" fill="none" />
+          
+          <!-- Clients -->
+          <rect x="100" y="350" width="150" height="60" rx="10" fill="#ffb900" />
+          <text x="175" y="385" font-size="16" fill="#333" text-anchor="middle">Client Applications</text>
+          
+          <!-- Client connection -->
+          <path d="M250 380 L360 380" stroke="#666" stroke-width="2" fill="none" />
+          <polygon points="355,375 370,380 355,385" fill="#666" />
+        </svg>
+      </div>
+      <p class="text-muted">ESB Transformer Azure Architecture</p>
+    </div>
+  </div>
+</div>
+
+<!-- Core Components Section -->
+<div class="card mb-4 border rounded-4">
+  <div class="card-header bg-primary text-white">
+    <h5 class="mb-0"><i class="material-icons-outlined me-2">build</i>Core Components</h5>
+  </div>
+  <div class="card-body">
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+      <!-- Container Instances -->
+      <div class="col">
+        <div class="card feature-card h-100 border">
+          <div class="card-body text-center">
+            <i class="fas fa-cubes service-icon"></i>
+            <h5 class="card-title">Azure Container Instances</h5>
+            <p class="card-text">Hosts the ESB Transformer application as containerized microservices without the complexity of managing Kubernetes.</p>
+            <ul class="list-group list-group-flush mb-3">
+              <li class="list-group-item">Serverless container runtime</li>
+              <li class="list-group-item">Fast startup times</li>
+              <li class="list-group-item">Per-second billing</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Event Hubs -->
+      <div class="col">
+        <div class="card feature-card h-100 border">
+          <div class="card-body text-center">
+            <i class="fas fa-exchange-alt service-icon"></i>
+            <h5 class="card-title">Azure Event Hubs</h5>
+            <p class="card-text">Handles the ingestion of source files and delivery of transformation results at scale.</p>
+            <ul class="list-group list-group-flush mb-3">
+              <li class="list-group-item">Big data streaming platform</li>
+              <li class="list-group-item">Millions of events per second</li>
+              <li class="list-group-item">Supports various protocols</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Blob Storage -->
+      <div class="col">
+        <div class="card feature-card h-100 border">
+          <div class="card-body text-center">
+            <i class="fas fa-database service-icon"></i>
+            <h5 class="card-title">Azure Blob Storage</h5>
+            <p class="card-text">Stores transformation input files, results, and persistent application data.</p>
+            <ul class="list-group list-group-flush mb-3">
+              <li class="list-group-item">Massively scalable object storage</li>
+              <li class="list-group-item">Hot/Cool/Archive tiers</li>
+              <li class="list-group-item">Strong consistency</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Azure OpenAI -->
+      <div class="col">
+        <div class="card feature-card h-100 border">
+          <div class="card-body text-center">
+            <i class="fas fa-brain service-icon"></i>
+            <h5 class="card-title">Azure OpenAI Service</h5>
+            <p class="card-text">Powers the intelligent schema mapping and transformation capabilities.</p>
+            <ul class="list-group list-group-flush mb-3">
+              <li class="list-group-item">Enterprise-ready AI models</li>
+              <li class="list-group-item">Compliance and data governance</li>
+              <li class="list-group-item">Fine-tuning capability</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Key Vault -->
+      <div class="col">
+        <div class="card feature-card h-100 border">
+          <div class="card-body text-center">
+            <i class="fas fa-key service-icon"></i>
+            <h5 class="card-title">Azure Key Vault</h5>
+            <p class="card-text">Securely stores and manages secrets, keys, and certificates for the application.</p>
+            <ul class="list-group list-group-flush mb-3">
+              <li class="list-group-item">Centralized secret management</li>
+              <li class="list-group-item">FIPS 140-2 Level 2 validated HSMs</li>
+              <li class="list-group-item">Access control and monitoring</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Front Door -->
+      <div class="col">
+        <div class="card feature-card h-100 border">
+          <div class="card-body text-center">
+            <i class="fas fa-globe service-icon"></i>
+            <h5 class="card-title">Azure Front Door</h5>
+            <p class="card-text">Provides global load balancing, WAF, and API gateway capabilities for the service.</p>
+            <ul class="list-group list-group-flush mb-3">
+              <li class="list-group-item">Global application delivery</li>
+              <li class="list-group-item">Web Application Firewall (WAF)</li>
+              <li class="list-group-item">API Management integration</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Solution Details Section -->
+<div class="card mb-4 border rounded-4">
+  <div class="card-header bg-primary text-white">
+    <h5 class="mb-0"><i class="material-icons-outlined me-2">settings</i>Implementation Details</h5>
+  </div>
+  <div class="card-body">
+    <h5>Containerization Approach</h5>
+    <p>The ESB Transformer application is containerized using Docker with the following components:</p>
+    <ul>
+      <li><strong>Web UI Container:</strong> Hosts the Flask application frontend.</li>
+      <li><strong>Transformation Engine Container:</strong> Processes the transformations using AI models.</li>
+      <li><strong>Database Container:</strong> Optional persistent storage for transformation history and user data.</li>
+    </ul>
+    
+    <hr class="my-4">
+    
+    <h5>Event-Driven Architecture</h5>
+    <p>The solution uses an event-driven architecture to handle file transformations asynchronously:</p>
+    <ol>
+      <li>Input files are uploaded to an Event Hub consumer group dedicated to ingestion.</li>
+      <li>Container instances process the transformations, storing results in Blob Storage.</li>
+      <li>Transformation completion events are published to an Event Hub topic for notification.</li>
+      <li>Client applications can subscribe to completion events or poll for status.</li>
+    </ol>
+    
+    <hr class="my-4">
+    
+    <h5>Security Considerations</h5>
+    <p>The architecture implements multiple security layers:</p>
+    <ul>
+      <li><strong>Network Security:</strong> Private endpoints for Azure services, network isolation for containers.</li>
+      <li><strong>Identity Management:</strong> Azure AD integration for authentication and authorization.</li>
+      <li><strong>Data Protection:</strong> Encryption at rest and in transit for all data stores.</li>
+      <li><strong>Secret Management:</strong> Azure Key Vault integration for secure credential storage.</li>
+    </ul>
+    
+    <hr class="my-4">
+    
+    <h5>Scaling Strategy</h5>
+    <p>The solution scales automatically based on demand:</p>
+    <ul>
+      <li><strong>Horizontal Scaling:</strong> Container Instances are scaled based on Event Hub message count.</li>
+      <li><strong>Auto-scaling:</strong> Logic Apps monitor queue depth and trigger scaling operations.</li>
+      <li><strong>Cost Optimization:</strong> Containers scale to zero when no transformations are pending.</li>
+    </ul>
+  </div>
+</div>
+
+<!-- Deployment Steps -->
+<div class="card border rounded-4">
+  <div class="card-header bg-primary text-white">
+    <h5 class="mb-0"><i class="material-icons-outlined me-2">rocket_launch</i>Deployment Steps</h5>
+  </div>
+  <div class="card-body">
+    <p>Follow these high-level steps to deploy the ESB Transformer in Azure:</p>
+    
+    <div class="accordion" id="deploymentAccordion">
+      <div class="card mb-3">
+        <div class="card-header bg-light" id="headingOne" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+          <h5 class="mb-0">1. Provision Azure Resources</h5>
+        </div>
+        <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#deploymentAccordion">
+          <div class="card-body">
+            <p>Create the required Azure resources using an Infrastructure as Code approach with Azure Bicep or Terraform:</p>
+            <ul>
+              <li>Resource Group for organizational structure</li>
+              <li>Event Hubs Namespace with input and output topics</li>
+              <li>Storage Account for persistent file storage</li>
+              <li>Container Registry to store application container images</li>
+              <li>Key Vault for secrets management</li>
+              <li>Azure OpenAI Service instance</li>
+              <li>Azure Front Door for global routing</li>
+            </ul>
+            <p>Use an automated deployment pipeline to ensure consistent resource provisioning.</p>
+          </div>
+        </div>
+      </div>
+      
+      <div class="card mb-3">
+        <div class="card-header bg-light" id="headingTwo" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+          <h5 class="mb-0">2. Build and Push Container Images</h5>
+        </div>
+        <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#deploymentAccordion">
+          <div class="card-body">
+            <p>Create and push the application container images to Azure Container Registry:</p>
+            <ol>
+              <li>Build Docker images for each component (Web UI, Transformation Engine)</li>
+              <li>Tag images with appropriate version numbers</li>
+              <li>Push images to Azure Container Registry</li>
+              <li>Scan images for vulnerabilities using Azure Defender for Container Registries</li>
+            </ol>
+            <p>Implement CI/CD pipelines to automate the build and deployment process.</p>
+          </div>
+        </div>
+      </div>
+      
+      <div class="card mb-3">
+        <div class="card-header bg-light" id="headingThree" data-toggle="collapse" data-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+          <h5 class="mb-0">3. Deploy Container Instances</h5>
+        </div>
+        <div id="collapseThree" class="collapse" aria-labelledby="headingThree" data-parent="#deploymentAccordion">
+          <div class="card-body">
+            <p>Deploy the application containers to Azure Container Instances:</p>
+            <ol>
+              <li>Create Container Instance Groups with appropriate resource allocations</li>
+              <li>Configure environment variables for service connections</li>
+              <li>Set up managed identity for secure service access</li>
+              <li>Configure container restart policies</li>
+              <li>Set up monitoring and logging</li>
+            </ol>
+            <p>Use Container Groups to deploy related containers together for efficient resource usage.</p>
+          </div>
+        </div>
+      </div>
+      
+      <div class="card">
+        <div class="card-header bg-light" id="headingFour" data-toggle="collapse" data-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
+          <h5 class="mb-0">4. Configure Integration and Monitoring</h5>
+        </div>
+        <div id="collapseFour" class="collapse" aria-labelledby="headingFour" data-parent="#deploymentAccordion">
+          <div class="card-body">
+            <p>Set up integration between services and implement monitoring:</p>
+            <ul>
+              <li>Configure Event Hub connection strings in Key Vault</li>
+              <li>Set up Azure Monitor for application insights</li>
+              <li>Configure alert rules for critical metrics</li>
+              <li>Set up Log Analytics workspace for centralized logging</li>
+              <li>Configure Azure Front Door rules and WAF policies</li>
+              <li>Set up Azure OpenAI Service connections</li>
+            </ul>
+            <p>Implement a robust monitoring strategy to ensure service reliability and performance.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Handle the accordion toggling
+    const accordionHeaders = document.querySelectorAll('[data-toggle="collapse"]');
+    
+    accordionHeaders.forEach(header => {
+      header.addEventListener('click', function() {
+        const targetId = this.getAttribute('data-target');
+        const target = document.querySelector(targetId);
+        
+        if (target) {
+          const isExpanded = this.getAttribute('aria-expanded') === 'true';
+          this.setAttribute('aria-expanded', !isExpanded);
+          
+          if (isExpanded) {
+            target.classList.remove('show');
+          } else {
+            // Close all other items
+            document.querySelectorAll('#deploymentAccordion .collapse.show').forEach(item => {
+              if (item.id !== targetId.substr(1)) {
+                item.classList.remove('show');
+                document.querySelector(`[aria-controls="${item.id}"]`).setAttribute('aria-expanded', 'false');
+              }
+            });
+            
+            target.classList.add('show');
+          }
+        }
+      });
+    });
+  });
+</script>
+{% endblock %} 

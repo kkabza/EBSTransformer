@@ -55,7 +55,7 @@
             <div class="schema-icon-large mb-3">
               <i class="material-icons-outlined" style="font-size: 72px;">{{ schema.icon }}</i>
             </div>
-            <button class="btn btn-sm btn-outline-primary rounded-3" data-bs-toggle="modal" data-bs-target="#schemaPreviewModal">
+            <button class="btn btn-sm btn-outline-primary rounded-3" data-toggle="modal" data-target="#schemaPreviewModal">
               <i class="material-icons-outlined align-middle me-1">code</i> View Schema Definition
             </button>
           </div>
@@ -167,42 +167,28 @@
 </div>
 
 <!-- Schema Preview Modal -->
-<div class="modal" id="schemaPreviewModal" tabindex="-1" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered modal-lg">
-    <div class="modal-content rounded-4">
-      <div class="modal-header">
-        <h5 class="modal-title">{{ schema.name }} Schema Definition</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+<div class="modal fade" id="schemaPreviewModal" tabindex="-1" role="dialog" aria-labelledby="schemaPreviewModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
+    <div class="modal-content rounded-4" style="background-color: #2d2d2d; color: #f8f9fa;">
+      <div class="modal-header" style="border-bottom-color: #444;">
+        <h5 class="modal-title" id="schemaPreviewModalLabel" style="color: #f8f9fa;">{{ schema.name }} Schema Definition</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" style="color: #f8f9fa;">
+          <span aria-hidden="true">&times;</span>
+        </button>
       </div>
       <div class="modal-body">
-        <pre><code class="language-json" id="schema-definition">
-{
-  "name": "{{ schema.name }}",
-  "description": "{{ schema.description }}",
-  "sourceType": "{{ schema.source_type }}",
-  "targetType": "{{ schema.target_type }}",
-  "version": "1.0",
-  "rules": [
-    {
-      "field": "Example Source Field",
-      "mapping": "Example Target Field",
-      "transformations": [
-        {
-          "type": "Replace",
-          "pattern": "ABC",
-          "replacement": "XYZ"
-        }
-      ]
-    }
-  ]
-}
-        </code></pre>
+        <div class="mb-3">
+          <label class="form-label" style="color: #f8f9fa;">Schema Definition</label>
+          <div class="schema-preview-container" style="max-height: 600px; overflow: auto; background-color: #2d2d2d; border: 1px solid #444; border-radius: 4px;">
+            <pre style="padding: 15px; margin: 0; white-space: pre-wrap;"><code id="schema-preview-content" class="language-xml" style="color: #f8f9fa;"></code></pre>
+          </div>
+        </div>
       </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-light rounded-3" data-bs-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-outline-primary rounded-3">
+      <div class="modal-footer" style="border-top-color: #444;">
+        <button type="button" class="btn btn-dark rounded-3" data-dismiss="modal">Close</button>
+        <a href="{{ url_for('download_schema', schema_id=schema.id) }}" class="btn btn-primary rounded-3" id="download-schema-btn">
           <i class="material-icons-outlined align-middle me-1">download</i> Download
-        </button>
+        </a>
       </div>
     </div>
   </div>
@@ -223,6 +209,54 @@
     const resultsSection = document.getElementById('results-section');
     const progressBar = document.getElementById('progress-bar');
     const uploadForm = document.getElementById('file-upload-form');
+    
+    // Load schema content when page loads
+    loadSchemaContent('{{ schema.id }}');
+    
+    // Function to apply syntax highlighting 
+    function applyHighlighting(content, language) {
+      const element = document.getElementById('schema-preview-content');
+      
+      // Simple syntax highlighting
+      if (language === 'xml' || content.trim().startsWith('<')) {
+        content = content.replace(/&/g, '&amp;')
+                         .replace(/</g, '&lt;')
+                         .replace(/>/g, '&gt;')
+                         .replace(/("[^"]*")/g, '<span style="color: #a6e22e;">$1</span>')
+                         .replace(/&lt;(\/?[a-zA-Z0-9_:-]+)/g, '&lt;<span style="color: #f92672;">$1</span>')
+                         .replace(/([a-zA-Z0-9_:-]+)=/g, '<span style="color: #66d9ef;">$1</span>=');
+      } else if (language === 'json' || content.trim().startsWith('{')) {
+        content = content.replace(/&/g, '&amp;')
+                         .replace(/</g, '&lt;')
+                         .replace(/>/g, '&gt;')
+                         .replace(/("[^"]*"):/g, '<span style="color: #f92672;">$1</span>:')
+                         .replace(/: ("[^"]*")/g, ': <span style="color: #a6e22e;">$1</span>')
+                         .replace(/: (true|false|null)/g, ': <span style="color: #66d9ef;">$1</span>')
+                         .replace(/: (\d+(\.\d+)?)/g, ': <span style="color: #ae81ff;">$1</span>');
+      }
+      
+      element.innerHTML = content;
+    }
+    
+    // Load schema content
+    function loadSchemaContent(schemaId) {
+      fetch(`/schemas/view/${schemaId}`)
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('Failed to load schema content');
+          }
+          return response.json();
+        })
+        .then(data => {
+          // Apply syntax highlighting based on content
+          const language = schemaId.includes('json') ? 'json' : 'xml';
+          applyHighlighting(data.content || 'No schema content available', language);
+        })
+        .catch(error => {
+          console.error('Error loading schema:', error);
+          document.getElementById('schema-preview-content').textContent = 'Error loading schema content';
+        });
+    }
     
     // File list to track selected files
     let selectedFiles = [];

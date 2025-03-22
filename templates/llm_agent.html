@@ -1,0 +1,484 @@
+{% extends "base.html" %}
+
+{% block title %}ESB Transformer - LLM Agent{% endblock %}
+
+{% block page_title %}
+<div class="d-flex align-items-center">
+  <div>
+    <i class="material-icons-outlined align-middle me-2 fs-2">smart_toy</i>
+  </div>
+  <div>
+    <h3 class="mb-0">LLM Agent</h3>
+    <p class="text-secondary mb-0">Understanding the AI-powered transformation assistant</p>
+  </div>
+</div>
+{% endblock %}
+
+{% block head %}
+{{ super() }}
+<script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: 'dark',
+      securityLevel: 'loose',
+      logLevel: 'error',
+      flowchart: { 
+        useMaxWidth: true, 
+        htmlLabels: true,
+        curve: 'basis' 
+      }
+    });
+  });
+</script>
+<style>
+  .llm-card {
+    margin-bottom: 2rem;
+    border-radius: 10px;
+    overflow: hidden;
+    transition: all 0.3s ease;
+  }
+  
+  .llm-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+  }
+  
+  .feature-card {
+    height: 100%;
+    border-radius: 10px;
+    transition: all 0.3s ease;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    background-color: #212529;
+  }
+  
+  .feature-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    border-color: var(--primary-color);
+  }
+  
+  .feature-icon {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+    color: var(--primary-color);
+  }
+  
+  .mermaid {
+    background-color: #1E1E1E;
+    padding: 20px;
+    border-radius: 10px;
+    margin: 20px 0;
+    width: 100%;
+    max-width: 100%;
+    overflow-x: auto;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  }
+  
+  .mermaid svg {
+    max-width: 100%;
+    height: auto;
+  }
+  
+  /* Enhance mermaid diagram text */
+  .mermaid .label {
+    color: white !important;
+    font-weight: bold !important;
+  }
+  
+  .mermaid .edgeLabel {
+    background-color: #2d3748 !important;
+    color: white !important;
+    border-radius: 4px;
+    padding: 2px 4px;
+  }
+  
+  .mermaid .flowchart-link {
+    stroke-width: 2px !important;
+  }
+  
+  .step-number {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background-color: var(--primary-color);
+    color: white;
+    font-weight: bold;
+    margin-right: 10px;
+  }
+  
+  .scenario-card {
+    border-left: 4px solid var(--primary-color);
+    background-color: rgba(25, 30, 40, 0.8);
+    padding: 20px;
+    border-radius: 0 10px 10px 0;
+    margin-bottom: 20px;
+    color: #f0f0f0;
+  }
+  
+  .card-text, .card-body p {
+    color: #e0e0e0;
+  }
+  
+  .card-title {
+    color: #ffffff;
+    font-weight: 500;
+  }
+  
+  .lead {
+    color: #ffffff;
+    font-weight: 300;
+  }
+  
+  .card-header {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  }
+  
+  .bg-primary {
+    background-color: #2d3748 !important;
+  }
+  
+  h5 {
+    color: #ffffff;
+    margin-top: 1rem;
+  }
+  
+  .text-primary {
+    color: #4BBEB3 !important;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Introduction to LLM Agent -->
+<div class="card llm-card">
+  <div class="card-header bg-primary text-white">
+    <h4 class="mb-0"><i class="material-icons-outlined align-middle me-2">psychology</i>What is the LLM Agent?</h4>
+  </div>
+  <div class="card-body">
+    <div class="row align-items-center">
+      <div class="col-md-8">
+        <p class="lead">
+          The LLM Agent is an AI-powered assistant that brings intelligence to data transformations in the ESB Transformer platform.
+        </p>
+        
+        <p>
+          At its core, the LLM (Large Language Model) Agent acts as a smart assistant that understands both the structure and meaning of your data. 
+          Unlike traditional transformation tools that require explicit mapping rules, the LLM Agent can interpret the context of your data and 
+          automatically determine how to transform it between different formats.
+        </p>
+        
+        <p>
+          Think of it as a translator that not only knows the syntax of different data languages (XML, JSON, CSV), but also understands the 
+          semantics—what the data actually means and how different elements relate to each other.
+        </p>
+      </div>
+      <div class="col-md-4 text-center">
+        <img src="{{ url_for('static', filename='images/ai-agent.png') }}" alt="AI Agent" class="img-fluid rounded" style="max-width: 250px;" onerror="this.src='https://placehold.co/250x200/1a1f2b/4BBEB3?text=AI+Agent';this.onerror='';">
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- How It Works -->
+<div class="card llm-card">
+  <div class="card-header bg-primary text-white">
+    <h4 class="mb-0"><i class="material-icons-outlined align-middle me-2">lightbulb</i>How the LLM Agent Works</h4>
+  </div>
+  <div class="card-body">
+    <p class="lead mb-4">
+      The LLM Agent processes your data through a series of intelligent steps, applying natural language understanding to transform your content.
+    </p>
+    
+    <div class="mermaid">
+      %%{init: {'flowchart': {'useMaxWidth': true, 'curve': 'basis', 'defaultLinkColor': '#ffffff'}}}%%
+      flowchart LR
+        A[Input File] --> B[Content Extraction]
+        B --> C[Structure Analysis]
+        C --> D[Semantic Understanding]
+        D --> E[Schema Mapping]
+        E --> F[Transformation Rules]
+        F --> G[Rule Application]
+        G --> H[Output Generation]
+        
+        classDef primary fill:#2c5282,stroke:#ffffff,color:#ffffff,stroke-width:2px,font-weight:bold
+        classDef secondary fill:#1a1f2b,stroke:#ffffff,color:#ffffff,stroke-width:2px,font-weight:bold
+        
+        class A,H secondary
+        class B,C,D,E,F,G primary
+    </div>
+    
+    <div class="row mt-5">
+      <div class="col-md-6">
+        <h5><span class="step-number">1</span> Understanding Your Data</h5>
+        <p>
+          When you upload a file, the LLM Agent first analyzes its structure and content. It identifies elements, attributes, 
+          hierarchies, and relationships within the data, building a comprehensive understanding of what it represents.
+        </p>
+      </div>
+      
+      <div class="col-md-6">
+        <h5><span class="step-number">2</span> Intelligent Mapping</h5>
+        <p>
+          The agent then matches elements from your source data to the appropriate fields in the target format. 
+          It uses contextual understanding to determine which fields correspond to each other, even when they have different names or structures.
+        </p>
+      </div>
+      
+      <div class="col-md-6">
+        <h5><span class="step-number">3</span> Handling Complex Transformations</h5>
+        <p>
+          For complex transformations, the LLM Agent can infer relationships, combine or split fields, 
+          and handle nested data structures. It applies business rules and format-specific requirements automatically.
+        </p>
+      </div>
+      
+      <div class="col-md-6">
+        <h5><span class="step-number">4</span> Output Generation</h5>
+        <p>
+          Finally, the agent generates the transformed output according to the target format's requirements. 
+          It ensures proper syntax, correct formatting, and adherence to schema validation rules.
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Key Features -->
+<div class="card llm-card">
+  <div class="card-header bg-primary text-white">
+    <h4 class="mb-0"><i class="material-icons-outlined align-middle me-2">star</i>Key Features</h4>
+  </div>
+  <div class="card-body">
+    <div class="row row-cols-1 row-cols-md-3 g-4">
+      <div class="col">
+        <div class="card feature-card h-100">
+          <div class="card-body text-center p-4">
+            <div class="feature-icon">
+              <i class="material-icons-outlined">psychology_alt</i>
+            </div>
+            <h5 class="card-title">Semantic Understanding</h5>
+            <p class="card-text">
+              Understands the meaning behind data fields, not just their structure. Can identify fields with different names 
+              but the same meaning across formats.
+            </p>
+          </div>
+        </div>
+      </div>
+      
+      <div class="col">
+        <div class="card feature-card h-100">
+          <div class="card-body text-center p-4">
+            <div class="feature-icon">
+              <i class="material-icons-outlined">auto_fix_high</i>
+            </div>
+            <h5 class="card-title">Automatic Adaptation</h5>
+            <p class="card-text">
+              Adapts to variations in data formats without requiring explicit rules. Handles exceptions and special cases intelligently.
+            </p>
+          </div>
+        </div>
+      </div>
+      
+      <div class="col">
+        <div class="card feature-card h-100">
+          <div class="card-body text-center p-4">
+            <div class="feature-icon">
+              <i class="material-icons-outlined">history_edu</i>
+            </div>
+            <h5 class="card-title">Learning Capability</h5>
+            <p class="card-text">
+              Improves over time by learning from previous transformations. Becomes more efficient and accurate with each use.
+            </p>
+          </div>
+        </div>
+      </div>
+      
+      <div class="col">
+        <div class="card feature-card h-100">
+          <div class="card-body text-center p-4">
+            <div class="feature-icon">
+              <i class="material-icons-outlined">schema</i>
+            </div>
+            <h5 class="card-title">Schema Flexibility</h5>
+            <p class="card-text">
+              Works with or without predefined schemas. Can infer schema requirements from examples when formal schemas aren't available.
+            </p>
+          </div>
+        </div>
+      </div>
+      
+      <div class="col">
+        <div class="card feature-card h-100">
+          <div class="card-body text-center p-4">
+            <div class="feature-icon">
+              <i class="material-icons-outlined">question_answer</i>
+            </div>
+            <h5 class="card-title">Interactive Assistance</h5>
+            <p class="card-text">
+              Provides explanations for transformations and can suggest improvements or identify potential issues in the data.
+            </p>
+          </div>
+        </div>
+      </div>
+      
+      <div class="col">
+        <div class="card feature-card h-100">
+          <div class="card-body text-center p-4">
+            <div class="feature-icon">
+              <i class="material-icons-outlined">data_object</i>
+            </div>
+            <h5 class="card-title">Multi-format Support</h5>
+            <p class="card-text">
+              Handles XML, JSON, CSV, and other structured data formats with equal proficiency, making cross-format transformations seamless.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Transformation Flow -->
+<div class="card llm-card">
+  <div class="card-header bg-primary text-white">
+    <h4 class="mb-0"><i class="material-icons-outlined align-middle me-2">shuffle</i>Data Flow Through the LLM Agent</h4>
+  </div>
+  <div class="card-body">
+    <p class="lead mb-4">
+      Here's how data flows through the system when utilizing the LLM Agent for transformations:
+    </p>
+    
+    <div class="mermaid">
+      %%{init: {'sequence': {'useMaxWidth': true, 'mirrorActors': false, 'actorMargin': 50, 'boxMargin': 10, 'messageFont': {'size': 14, 'weight': 'bold'}, 'noteFont': {'size': 14, 'weight': 'bold'}, 'actorFont': {'size': 14, 'weight': 'bold'}, 'boxTextColor': '#ffffff', 'actorTextColor': '#ffffff'}}}%%
+      sequenceDiagram
+        participant U as User Interface
+        participant P as Processing Engine
+        participant L as LLM Agent
+        participant V as Validator
+        participant O as Output Generator
+        
+        Note over U,O: File Transformation Journey
+        
+        U->>P: Upload File
+        P->>P: Extract Content
+        P->>L: Send Content for Analysis
+        L->>L: Analyze Structure
+        L->>L: Identify Elements & Relationships
+        L->>L: Determine Target Mapping
+        L->>P: Return Transformation Plan
+        P->>P: Apply Transformation Rules
+        P->>V: Validate Transformed Data
+        V->>P: Return Validation Results
+        P->>O: Generate Final Output
+        O->>U: Return Transformed File
+    </div>
+    
+    <div class="mt-5">
+      <h5>Real-World Example Scenarios</h5>
+      
+      <div class="scenario-card">
+        <h6><i class="material-icons-outlined align-middle me-1">assignment</i>Scenario 1: Insurance Claim Transformation</h6>
+        <p>
+          An insurance company needs to transform claim data from their legacy XML format to a standardized JSON format for a new cloud-based system.
+          The LLM Agent automatically maps fields like &lt;ClaimNumber&gt; to "claimId", &lt;InsuredName&gt; to "policyholderName", and understands that 
+          &lt;LossDate&gt; should be transformed to "incidentDate" in the target format.
+        </p>
+      </div>
+      
+      <div class="scenario-card">
+        <h6><i class="material-icons-outlined align-middle me-1">assignment</i>Scenario 2: CSV to XML Conversion</h6>
+        <p>
+          A healthcare provider needs to convert patient data from CSV spreadsheets to XML for integration with a FHIR-compatible system.
+          The LLM Agent recognizes column headers like "DOB" as date of birth, "Pt_ID" as patient identifier, and creates appropriate XML 
+          elements with proper nesting and attributes based on healthcare data standards.
+        </p>
+      </div>
+      
+      <div class="scenario-card">
+        <h6><i class="material-icons-outlined align-middle me-1">assignment</i>Scenario 3: Complex Schema Adaptation</h6>
+        <p>
+          A financial services company needs to transform transaction data between two different XML schemas with different hierarchy structures.
+          The LLM Agent identifies relationships between elements across schemas, maintains data integrity during restructuring, and ensures 
+          all required fields are properly mapped even when nested differently.
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Benefits Section -->
+<div class="card llm-card">
+  <div class="card-header bg-primary text-white">
+    <h4 class="mb-0"><i class="material-icons-outlined align-middle me-2">trending_up</i>Benefits of Using the LLM Agent</h4>
+  </div>
+  <div class="card-body">
+    <div class="row">
+      <div class="col-md-6">
+        <div class="d-flex align-items-start mb-4">
+          <div class="flex-shrink-0">
+            <i class="material-icons-outlined text-primary" style="font-size: 2rem;">speed</i>
+          </div>
+          <div class="flex-grow-1 ms-3">
+            <h5>Faster Transformations</h5>
+            <p>
+              Reduces the time needed to create and maintain transformation mappings by automatically understanding data relationships.
+              What might take hours or days with traditional methods can be accomplished in minutes.
+            </p>
+          </div>
+        </div>
+      </div>
+      
+      <div class="col-md-6">
+        <div class="d-flex align-items-start mb-4">
+          <div class="flex-shrink-0">
+            <i class="material-icons-outlined text-primary" style="font-size: 2rem;">settings_suggest</i>
+          </div>
+          <div class="flex-grow-1 ms-3">
+            <h5>Reduced Complexity</h5>
+            <p>
+              Eliminates the need for complex mapping rules and scripting. The AI handles the complexity, letting you focus 
+              on the business requirements rather than technical details.
+            </p>
+          </div>
+        </div>
+      </div>
+      
+      <div class="col-md-6">
+        <div class="d-flex align-items-start mb-4">
+          <div class="flex-shrink-0">
+            <i class="material-icons-outlined text-primary" style="font-size: 2rem;">verified</i>
+          </div>
+          <div class="flex-grow-1 ms-3">
+            <h5>Improved Accuracy</h5>
+            <p>
+              Reduces mapping errors by understanding the semantic meaning of data. The LLM Agent can often catch and correct 
+              issues that might be missed in manual mappings.
+            </p>
+          </div>
+        </div>
+      </div>
+      
+      <div class="col-md-6">
+        <div class="d-flex align-items-start mb-4">
+          <div class="flex-shrink-0">
+            <i class="material-icons-outlined text-primary" style="font-size: 2rem;">sync</i>
+          </div>
+          <div class="flex-grow-1 ms-3">
+            <h5>Adaptability</h5>
+            <p>
+              Easily handles changes in data formats without requiring complete remapping. When source or target formats evolve, 
+              the LLM Agent can adapt without extensive reconfiguration.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %} 

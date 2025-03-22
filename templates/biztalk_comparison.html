@@ -1,0 +1,662 @@
+{% extends 'base.html' %}
+
+{% block title %}ESB Transformer - BizTalk Comparison{% endblock %}
+
+{% block head %}
+{{ super() }}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/biztalk_comparison.css') }}">
+<style>
+  .comparison-feature-card {
+    margin-bottom: 2rem;
+    border-radius: 10px;
+    overflow: hidden;
+    transition: all 0.3s ease;
+  }
+  
+  .comparison-feature-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+  }
+  
+  .card-text, .card-body p {
+    color: #e0e0e0;
+  }
+  
+  .card-title {
+    color: #ffffff;
+    font-weight: 500;
+  }
+  
+  .lead {
+    color: #ffffff;
+    font-weight: 300;
+  }
+  
+  .card-header {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  }
+  
+  .bg-primary {
+    background-color: #2d3748 !important;
+  }
+  
+  h5 {
+    color: #ffffff;
+    margin-top: 1rem;
+  }
+  
+  .alert-info {
+    background-color: rgba(75, 190, 179, 0.1);
+    border-color: rgba(75, 190, 179, 0.2);
+    color: #e0e0e0;
+  }
+  
+  .alert-warning {
+    background-color: rgba(255, 193, 7, 0.15);
+    border-color: rgba(255, 193, 7, 0.3);
+    color: #f8f9fa;
+  }
+  
+  .alert-warning h5 {
+    color: #ffc107;
+  }
+  
+  .alert-warning strong {
+    color: #ffc107;
+  }
+  
+  .alert-success {
+    background-color: rgba(75, 190, 179, 0.15);
+    border-color: rgba(75, 190, 179, 0.3);
+    color: #e0e0e0;
+  }
+  
+  .feature-list li {
+    margin-bottom: 1rem;
+    color: #e0e0e0;
+  }
+  
+  .text-success {
+    color: #4BBEB3 !important;
+  }
+  
+  .text-danger {
+    color: #e74c3c !important;
+  }
+  
+  .feature-comparison {
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    margin-bottom: 1.5rem;
+    background-color: #212529;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+  
+  .feature-comparison .header {
+    background-color: #2d3748;
+    color: white;
+    padding: 1rem;
+    font-weight: 600;
+    border-bottom: 2px solid #4BBEB3;
+  }
+  
+  .feature-comparison .header.bg-danger {
+    background-color: rgba(231, 76, 60, 0.2);
+    border-bottom: 2px solid #e74c3c;
+  }
+  
+  .feature-comparison .body {
+    padding: 1rem;
+  }
+  
+  .benefits-card {
+    height: 100%;
+    transition: transform 0.2s;
+    background-color: #212529;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+  
+  .benefits-card:hover {
+    transform: translateY(-5px);
+  }
+  
+  .comparison-icon {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+    color: #4BBEB3;
+  }
+  
+  .alert-callout {
+    border-left: 5px solid #4BBEB3;
+    background-color: rgba(75, 190, 179, 0.1);
+    color: #e0e0e0;
+  }
+  
+  .btn-primary {
+    background-color: #4BBEB3;
+    border-color: #4BBEB3;
+  }
+  
+  .btn-primary:hover {
+    background-color: #3da89f;
+    border-color: #3da89f;
+  }
+  
+  .btn-outline-primary {
+    color: #4BBEB3;
+    border-color: #4BBEB3;
+  }
+  
+  .btn-outline-primary:hover {
+    background-color: #4BBEB3;
+    color: white;
+  }
+  
+  /* Critical table visibility overrides */
+  .special-comparison-marker.comparison-table {
+    display: table !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    width: 100% !important;
+    border-collapse: separate !important;
+    border-spacing: 0 !important;
+    margin-bottom: 2rem !important;
+    border: 3px solid #4BBEB3 !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3) !important;
+    background-color: #1a1f2b !important;
+    border-radius: 10px !important;
+    overflow: hidden !important;
+  }
+  
+  .special-comparison-marker.comparison-table thead {
+    display: table-header-group !important;
+  }
+  
+  .special-comparison-marker.comparison-table tbody {
+    display: table-row-group !important;
+  }
+  
+  .special-comparison-marker.comparison-table tr {
+    display: table-row !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+  }
+  
+  .special-comparison-marker.comparison-table tr:nth-child(even) {
+    background-color: rgba(30, 40, 60, 0.8) !important;
+  }
+  
+  .special-comparison-marker.comparison-table tr:nth-child(odd) {
+    background-color: rgba(20, 30, 45, 0.8) !important;
+  }
+  
+  .special-comparison-marker.comparison-table tr:hover {
+    background-color: rgba(75, 190, 179, 0.1) !important;
+  }
+  
+  .special-comparison-marker.comparison-table th,
+  .special-comparison-marker.comparison-table td {
+    display: table-cell !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    padding: 1rem !important;
+    text-align: left !important;
+    border: 1px solid #333945 !important;
+    color: #e0e0e0 !important;
+  }
+  
+  .special-comparison-marker.comparison-table th {
+    background-color: #2d3748 !important;
+    color: white !important;
+    font-weight: 600 !important;
+    border-bottom: 2px solid #4BBEB3 !important;
+  }
+  
+  .special-comparison-marker.comparison-table td strong {
+    color: #4BBEB3 !important;
+    font-weight: 600 !important;
+  }
+  
+  .table-responsive {
+    display: block !important;
+    width: 100% !important;
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+  }
+  
+  .text-teal {
+    color: #4BBEB3 !important;
+  }
+  
+  .border-teal {
+    border-color: #4BBEB3 !important;
+    border-width: 2px !important;
+  }
+  
+  .table-row-dark {
+    background-color: #1a202c !important;
+  }
+  
+  .table-row-darker {
+    background-color: #141a26 !important;
+  }
+  
+  .table {
+    color: #e0e0e0 !important;
+  }
+  
+  .table-dark {
+    background-color: #1a1f2b !important;
+    border-radius: 10px !important;
+    overflow: hidden !important;
+  }
+  
+  .table-primary {
+    background-color: #2d3748 !important;
+  }
+  
+  .table-bordered {
+    border: 2px solid #4BBEB3 !important;
+  }
+  
+  .table-dark th {
+    border-bottom: 2px solid #4BBEB3 !important;
+    font-weight: 600 !important;
+  }
+  
+  .table-dark td, .table-dark th {
+    border-color: #333945 !important;
+  }
+</style>
+{% endblock %}
+
+{% block page_title %}
+<div class="d-flex align-items-center">
+  <div>
+    <i class="material-icons-outlined align-middle me-2 fs-2">compare_arrows</i>
+  </div>
+  <div>
+    <h3 class="mb-0">BizTalk Comparison</h3>
+    <p class="text-secondary mb-0">Comparing ESB Transformer with BizTalk Server</p>
+  </div>
+</div>
+{% endblock %}
+
+{% block content %}
+<!-- Overview Section -->
+<div class="card mb-4 border rounded-4">
+  <div class="card-header bg-primary text-white">
+    <h5 class="mb-0"><i class="material-icons-outlined me-2">info</i>Overview</h5>
+  </div>
+  <div class="card-body">
+    <div class="row align-items-center">
+      <div class="col-lg-8">
+        <p class="lead">The ESB Transformer provides a modern, cloud-native solution for enterprise integration needs, offering significant advantages over legacy integration platforms like BizTalk.</p>
+        
+        <div class="alert alert-warning">
+          <h5 class="alert-heading"><i class="fas fa-exclamation-triangle me-2"></i>BizTalk Server 2013 End of Support</h5>
+          <p>Microsoft has announced end of support for BizTalk Server 2013:</p>
+          <ul>
+            <li><strong>Mainstream Support:</strong> Ended on July 10, 2018</li>
+            <li><strong>Extended Support:</strong> Ended on July 11, 2023</li>
+          </ul>
+          <p class="mb-0">Organizations still using BizTalk Server 2013 are operating with outdated technology that no longer receives security updates or technical support, creating significant security and compliance risks.</p>
+        </div>
+        
+        <p class="mt-3">Moving to the ESB Transformer provides immediate benefits, including reduced infrastructure costs, improved scalability, and modern integration capabilities without the complexity of legacy systems.</p>
+      </div>
+      <div class="col-lg-4 text-center">
+        <!-- Inline SVG for cloud transformation instead of external image -->
+        <svg width="200" height="200" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+          <!-- Cloud Shape -->
+          <path d="M160,90 C160,57.3 133.7,31 101,31 C68.3,31 42,57.3 42,90 C42,90 42,90 42,90 C18.8,90 0,108.8 0,132 C0,155.2 18.8,174 42,174 L160,174 C182.1,174 200,156.1 200,134 C200,111.9 182.1,94 160,94 C160,92.7 160,91.3 160,90" fill="#4BBEB3" opacity="0.2"/>
+          
+          <!-- Server Icon (Legacy) -->
+          <rect x="60" y="80" width="30" height="40" rx="2" fill="#e74c3c" />
+          <rect x="65" y="85" width="20" height="3" fill="white" />
+          <rect x="65" y="92" width="20" height="3" fill="white" />
+          <rect x="65" y="99" width="20" height="3" fill="white" />
+          
+          <!-- Arrow -->
+          <path d="M100,100 L130,100" stroke="#4BBEB3" stroke-width="2" />
+          <polygon points="130,100 125,95 125,105" fill="#4BBEB3" />
+          
+          <!-- Cloud Container Icon (Modern) -->
+          <rect x="140" y="80" width="30" height="40" rx="5" fill="#4BBEB3" />
+          <path d="M145,95 C145,91.7 147.7,89 151,89 C154.3,89 157,91.7 157,95 C157,95 157,95 157,95 C159.2,95 161,96.8 161,99 C161,101.2 159.2,103 157,103 L145,103 C142.8,103 141,101.2 141,99 C141,96.8 142.8,95 145,95 C145,95 145,95 145,95" fill="white" />
+          
+          <!-- Up Arrow (Improvement) -->
+          <path d="M100,70 L100,40" stroke="#4BBEB3" stroke-width="2" />
+          <polygon points="100,40 95,45 105,45" fill="#4BBEB3" />
+          
+          <!-- Text Labels -->
+          <text x="75" y="135" font-family="Arial" font-size="8" text-anchor="middle" fill="#f8f9fa">Legacy</text>
+          <text x="155" y="135" font-family="Arial" font-size="8" text-anchor="middle" fill="#f8f9fa">Modern</text>
+          <text x="100" y="30" font-family="Arial" font-size="10" font-weight="bold" text-anchor="middle" fill="#4BBEB3">Transformation</text>
+        </svg>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Feature Comparison Section - Simplified Version with Cards -->
+<div class="card mb-4 border rounded-4">
+  <div class="card-header bg-primary text-white">
+    <h5 class="mb-0"><i class="material-icons-outlined me-2">compare_arrows</i>Feature Comparison</h5>
+  </div>
+  <div class="card-body">
+    <div class="alert alert-info mb-4">
+      <strong>Note:</strong> This comparison highlights key differences between ESB Transformer and BizTalk Server 2013.
+    </div>
+    
+    <!-- Side-by-side feature comparison cards -->
+    <div class="row g-4">
+      <!-- Deployment Card -->
+      <div class="col-lg-6 mb-4">
+        <div class="card h-100 bg-dark">
+          <div class="card-header bg-dark border-bottom border-teal">
+            <h5 class="text-teal mb-0">Deployment Model</h5>
+          </div>
+          <div class="card-body">
+            <div class="row align-items-center">
+              <div class="col-6">
+                <div class="text-center p-3">
+                  <i class="fas fa-cloud text-teal mb-3" style="font-size: 2rem;"></i>
+                  <h6 class="text-white">ESB Transformer</h6>
+                  <p class="small">Container-based, cloud-native with Docker</p>
+                </div>
+              </div>
+              <div class="col-6">
+                <div class="text-center p-3">
+                  <i class="fas fa-server text-danger mb-3" style="font-size: 2rem;"></i>
+                  <h6 class="text-white">BizTalk 2013</h6>
+                  <p class="small">Traditional server-based, requires Windows Server</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Scalability Card -->
+      <div class="col-lg-6 mb-4">
+        <div class="card h-100 bg-dark">
+          <div class="card-header bg-dark border-bottom border-teal">
+            <h5 class="text-teal mb-0">Scalability</h5>
+          </div>
+          <div class="card-body">
+            <div class="row align-items-center">
+              <div class="col-6">
+                <div class="text-center p-3">
+                  <i class="fas fa-expand-arrows-alt text-teal mb-3" style="font-size: 2rem;"></i>
+                  <h6 class="text-white">ESB Transformer</h6>
+                  <p class="small">Horizontal auto-scaling with Kubernetes or cloud services</p>
+                </div>
+              </div>
+              <div class="col-6">
+                <div class="text-center p-3">
+                  <i class="fas fa-arrow-up text-danger mb-3" style="font-size: 2rem;"></i>
+                  <h6 class="text-white">BizTalk 2013</h6>
+                  <p class="small">Vertical scaling with hardware limits, complex clustering</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Support Status Card -->
+      <div class="col-lg-6 mb-4">
+        <div class="card h-100 bg-dark">
+          <div class="card-header bg-dark border-bottom border-teal">
+            <h5 class="text-teal mb-0">Support Status</h5>
+          </div>
+          <div class="card-body">
+            <div class="row align-items-center">
+              <div class="col-6">
+                <div class="text-center p-3">
+                  <i class="fas fa-check-circle text-teal mb-3" style="font-size: 2rem;"></i>
+                  <h6 class="text-white">ESB Transformer</h6>
+                  <p class="small">Actively maintained with regular updates</p>
+                </div>
+              </div>
+              <div class="col-6">
+                <div class="text-center p-3">
+                  <i class="fas fa-times-circle text-danger mb-3" style="font-size: 2rem;"></i>
+                  <h6 class="text-white">BizTalk 2013</h6>
+                  <p class="small">End of life (Extended Support ended July 11, 2023)</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Security Card -->
+      <div class="col-lg-6 mb-4">
+        <div class="card h-100 bg-dark">
+          <div class="card-header bg-dark border-bottom border-teal">
+            <h5 class="text-teal mb-0">Security</h5>
+          </div>
+          <div class="card-body">
+            <div class="row align-items-center">
+              <div class="col-6">
+                <div class="text-center p-3">
+                  <i class="fas fa-shield-alt text-teal mb-3" style="font-size: 2rem;"></i>
+                  <h6 class="text-white">ESB Transformer</h6>
+                  <p class="small">Modern security protocols, automatic updates, HTTPS/TLS 1.3</p>
+                </div>
+              </div>
+              <div class="col-6">
+                <div class="text-center p-3">
+                  <i class="fas fa-unlock text-danger mb-3" style="font-size: 2rem;"></i>
+                  <h6 class="text-white">BizTalk 2013</h6>
+                  <p class="small">No security updates after July 2023, legacy protocols</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Transformation Card -->
+      <div class="col-lg-6 mb-4">
+        <div class="card h-100 bg-dark">
+          <div class="card-header bg-dark border-bottom border-teal">
+            <h5 class="text-teal mb-0">Transformation Capabilities</h5>
+          </div>
+          <div class="card-body">
+            <div class="row align-items-center">
+              <div class="col-6">
+                <div class="text-center p-3">
+                  <i class="fas fa-exchange-alt text-teal mb-3" style="font-size: 2rem;"></i>
+                  <h6 class="text-white">ESB Transformer</h6>
+                  <p class="small">XML, JSON, CSV with AI-assisted mapping and validation</p>
+                </div>
+              </div>
+              <div class="col-6">
+                <div class="text-center p-3">
+                  <i class="fas fa-file-code text-danger mb-3" style="font-size: 2rem;"></i>
+                  <h6 class="text-white">BizTalk 2013</h6>
+                  <p class="small">XML-focused with complex adapters for other formats</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Pricing Card -->
+      <div class="col-lg-6 mb-4">
+        <div class="card h-100 bg-dark">
+          <div class="card-header bg-dark border-bottom border-teal">
+            <h5 class="text-teal mb-0">Pricing Model</h5>
+          </div>
+          <div class="card-body">
+            <div class="row align-items-center">
+              <div class="col-6">
+                <div class="text-center p-3">
+                  <i class="fas fa-hand-holding-usd text-teal mb-3" style="font-size: 2rem;"></i>
+                  <h6 class="text-white">ESB Transformer</h6>
+                  <p class="small">Consumption-based, pay as you go, no upfront licensing</p>
+                </div>
+              </div>
+              <div class="col-6">
+                <div class="text-center p-3">
+                  <i class="fas fa-money-bill-wave text-danger mb-3" style="font-size: 2rem;"></i>
+                  <h6 class="text-white">BizTalk 2013</h6>
+                  <p class="small">Upfront licensing + SQL Server costs + CALs</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Additional Features Bullet List -->
+    <div class="card mt-4 bg-dark border border-teal">
+      <div class="card-header bg-dark border-bottom border-teal">
+        <h5 class="text-teal mb-0">Additional Feature Comparisons</h5>
+      </div>
+      <div class="card-body">
+        <div class="row">
+          <div class="col-md-6">
+            <h6 class="text-white mb-3">ESB Transformer Advantages</h6>
+            <ul class="feature-list">
+              <li>Modern development model with Python and REST APIs</li>
+              <li>Real-time monitoring dashboards with Prometheus/Grafana</li>
+              <li>Native cloud integration with Azure, AWS, and GCP</li>
+              <li>Minimal maintenance overhead with automated updates</li>
+              <li>Modern event-driven architecture patterns</li>
+              <li>Rapid deployment with CI/CD integration</li>
+              <li>Automated disaster recovery with instant failover</li>
+              <li>Modern web UI accessible from any device</li>
+            </ul>
+          </div>
+          <div class="col-md-6">
+            <h6 class="text-white mb-3">BizTalk Server 2013 Limitations</h6>
+            <ul class="feature-list">
+              <li>Outdated Visual Studio 2010/2012 development</li>
+              <li>Limited monitoring through Admin Console</li>
+              <li>Complex adapters needed for modern cloud services</li>
+              <li>High maintenance requiring specialized skills</li>
+              <li>Traditional pub/sub with message box architecture</li>
+              <li>Weeks or months for deployment cycles</li>
+              <li>Complex disaster recovery requiring manual intervention</li>
+              <li>Windows-only administration console</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Implementation Benefits -->
+<div class="card mb-4 border rounded-4">
+  <div class="card-header bg-primary text-white">
+    <h5 class="mb-0"><i class="material-icons-outlined me-2">trending_up</i>Implementation Benefits</h5>
+  </div>
+  <div class="card-body">
+    <div class="row row-cols-1 row-cols-md-3 g-4">
+      <!-- Cost Benefits -->
+      <div class="col">
+        <div class="card benefits-card h-100">
+          <div class="card-body text-center">
+            <i class="fas fa-dollar-sign comparison-icon"></i>
+            <h5 class="card-title">Cost Benefits</h5>
+            <p class="card-text">The ESB Transformer eliminates the need for expensive Windows Server and SQL Server licenses.</p>
+            <div class="alert alert-success p-2">
+              <small>Typical cost reduction: 60-70% compared to BizTalk</small>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Performance -->
+      <div class="col">
+        <div class="card benefits-card h-100">
+          <div class="card-body text-center">
+            <i class="fas fa-tachometer-alt comparison-icon"></i>
+            <h5 class="card-title">Performance</h5>
+            <p class="card-text">Lightweight architecture with optimized transformation engine delivers faster processing times.</p>
+            <div class="alert alert-success p-2">
+              <small>3-5x faster transformation compared to BizTalk</small>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Maintenance -->
+      <div class="col">
+        <div class="card benefits-card h-100">
+          <div class="card-body text-center">
+            <i class="fas fa-tools comparison-icon"></i>
+            <h5 class="card-title">Maintenance</h5>
+            <p class="card-text">Simplified deployment and management reduces maintenance overhead and specialized skills required.</p>
+            <div class="alert alert-success p-2">
+              <small>80% reduction in maintenance tasks</small>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="alert alert-callout mt-4 p-4">
+      <h5><i class="fas fa-rocket me-2"></i>Migration Path</h5>
+      <p>Moving from BizTalk to the ESB Transformer can be accomplished through a phased approach:</p>
+      <ol>
+        <li><strong>Assessment:</strong> Inventory current BizTalk applications and integration scenarios</li>
+        <li><strong>Prioritization:</strong> Identify high-value, low-complexity scenarios for initial migration</li>
+        <li><strong>Parallel Implementation:</strong> Deploy ESB Transformer alongside BizTalk during transition</li>
+        <li><strong>Migration:</strong> Move integration scenarios in phases based on priority</li>
+        <li><strong>Decommissioning:</strong> Gradually sunset BizTalk components as they're replaced</li>
+      </ol>
+    </div>
+  </div>
+</div>
+
+<!-- Call to Action -->
+<div class="card border rounded-4">
+  <div class="card-header bg-primary text-white">
+    <h5 class="mb-0"><i class="material-icons-outlined me-2">done_all</i>Conclusion</h5>
+  </div>
+  <div class="card-body">
+    <div class="row align-items-center">
+      <div class="col-lg-8">
+        <h4 class="text-white">Ready to Replace Your Legacy BizTalk System?</h4>
+        <p>The ESB Transformer offers a modern, efficient replacement for outdated BizTalk deployments. With the end of support for BizTalk Server 2013, now is the time to migrate to a future-proof solution.</p>
+        
+        <div class="alert alert-warning">
+          <strong>Security Risk Alert:</strong> Running unsupported software like BizTalk Server 2013 exposes your organization to security vulnerabilities that will no longer be patched.
+        </div>
+        
+        <p>Our platform delivers the core functionality you need for enterprise integration without the legacy complexity and cost.</p>
+        
+        <a href="/transformations" class="btn btn-primary me-2">
+          <i class="fas fa-exchange-alt me-2"></i>Explore Transformations
+        </a>
+        <a href="/poc-architecture" class="btn btn-outline-primary">
+          <i class="fas fa-project-diagram me-2"></i>View Architecture
+        </a>
+      </div>
+      <div class="col-lg-4 text-center d-none d-lg-block">
+        <div class="p-4 rounded-circle mx-auto" style="width: 200px; height: 200px; background-color: rgba(75, 190, 179, 0.1);">
+          <i class="fas fa-rocket" style="font-size: 100px; color: #4BBEB3;"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  // Simple script to ensure the table is visible at page load
+  document.addEventListener('DOMContentLoaded', function() {
+    console.log('Page loaded, ensuring table visibility');
+  });
+</script>
+{% endblock %} 

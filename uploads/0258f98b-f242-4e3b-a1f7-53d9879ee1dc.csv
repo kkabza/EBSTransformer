@@ -1,4 +1,0 @@
-ClaimNumber,PolicyNumber,InsuredName,LossDate,GlassRepairCost,GlassType,VendorInvoiceNumber
-SL1234567,PN9876543,John Doe,2024-03-18,350.00,Windshield,INV123456
-SL1234568,PN9876544,Jane Smith,2024-03-19,275.50,Side Window,INV123457
-SL1234569,PN9876545,Mike Brown,2024-03-20,500.00,Rear Window,INV123458 

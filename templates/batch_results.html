@@ -75,6 +75,9 @@
     <div class="d-flex align-items-center justify-content-between">
       <h5 class="mb-0">Processed Files</h5>
       <div class="d-flex gap-2">
+        <a href="{{ request.path }}?view_first=1" class="btn btn-sm btn-success rounded-4">
+          <i class="fas fa-search"></i> View Results
+        </a>
         <button class="btn btn-sm btn-primary rounded-4" id="new-batch-btn">
           <i class="fas fa-plus"></i> Process New Files
         </button>

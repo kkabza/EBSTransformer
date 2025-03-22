@@ -1,0 +1,609 @@
+{% extends 'base.html' %}
+
+{% block title %}ESB Transformer - Architecture{% endblock %}
+
+{% block head %}
+{{ super() }}
+<style>
+  .architecture-card {
+    margin-bottom: 2rem;
+    border-radius: 10px;
+    overflow: hidden;
+    transition: all 0.3s ease;
+  }
+  
+  .architecture-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+  }
+  
+  .component-card {
+    height: 100%;
+    border-radius: 10px;
+    transition: all 0.3s ease;
+  }
+  
+  .component-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  }
+  
+  .component-icon {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+    color: var(--primary-color);
+  }
+  
+  .mermaid {
+    background-color: #1E1E1E;
+    padding: 20px;
+    border-radius: 10px;
+    margin: 20px 0;
+  }
+  
+  .code-block {
+    background-color: #2d2d2d;
+    color: #f5f5f5;
+    border-radius: 5px;
+    padding: 1rem;
+    font-family: 'Roboto Mono', monospace;
+    font-size: 0.9rem;
+    overflow-x: auto;
+  }
+  
+  .architecture-diagram {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+</style>
+<script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: 'dark',
+      securityLevel: 'loose',
+      logLevel: 'error',
+      flowchart: { 
+        useMaxWidth: false, 
+        htmlLabels: true,
+        curve: 'basis' 
+      }
+    });
+  });
+</script>
+{% endblock %}
+
+{% block page_title %}
+<div class="d-flex align-items-center">
+  <div>
+    <i class="material-icons-outlined align-middle me-2 fs-2">architecture</i>
+  </div>
+  <div>
+    <h3 class="mb-0">POC Architecture</h3>
+    <p class="text-secondary mb-0">Solution architecture for the ESB Transformation Service</p>
+  </div>
+</div>
+{% endblock %}
+
+{% block content %}
+<!-- Intro Section -->
+<div class="alert alert-primary d-flex align-items-center mb-4" role="alert">
+  <i class="material-icons-outlined me-2 fs-4">info</i>
+  <div>
+    This page describes the POC (Proof of Concept) architecture as well as the overall solution architecture for the ESB Transformation Service.
+  </div>
+</div>
+
+<!-- System Overview -->
+<div class="card architecture-card">
+  <div class="card-header bg-primary text-white">
+    <h4 class="mb-0"><i class="material-icons-outlined align-middle me-2">layers</i>System Overview</h4>
+  </div>
+  <div class="card-body">
+    <p class="lead">
+      The ESB Transformer is a state-of-the-art data transformation platform that leverages the power of 
+      Large Language Models (LLMs) to intelligently convert between different data formats, with a focus 
+      on XML, JSON, and CSV data.
+    </p>
+    
+    <div class="mt-4">
+      <div class="pre-mermaid text-center">
+        <div class="mermaid">
+          flowchart TB
+            subgraph Client ["Client Layer"]
+              UI[Web Interface]
+              API[REST API]
+            end
+            
+            subgraph Application ["Application Layer"]
+              Controller[Controller]
+              Transformer[Transformation Engine]
+              Validator[Schema Validator]
+              LLM[LLM Agent]
+            end
+            
+            subgraph Storage ["Storage Layer"]
+              FileStore[File Storage]
+              SchemaRepo[Schema Repository]
+              ResultsCache[Results Cache]
+            end
+            
+            UI --> Controller
+            API --> Controller
+            Controller --> Transformer
+            Transformer --> LLM
+            Transformer --> Validator
+            Validator --> SchemaRepo
+            LLM --> Transformer
+            Transformer --> FileStore
+            Transformer --> ResultsCache
+            
+            classDef primary fill:#4BBEB3,stroke:#3DA89F,color:white
+            classDef secondary fill:#1a1f2b,stroke:#1a1f2b,color:white
+            classDef accent fill:#34495e,stroke:#34495e,color:white
+            
+            class Transformer,LLM primary
+            class UI,API,Controller,Validator secondary
+            class FileStore,SchemaRepo,ResultsCache accent
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Overview Section for POC -->
+<div class="card mb-4 border rounded-4">
+  <div class="card-header bg-primary text-white">
+    <h5 class="mb-0"><i class="material-icons-outlined me-2">info</i>POC Overview</h5>
+  </div>
+  <div class="card-body">
+    <p>
+      The POC architecture demonstrates a working prototype of the ESB Transformer with essential functionality for:
+    </p>
+    <ul>
+      <li>File transformation between XML, JSON, and CSV formats</li>
+      <li>Schema validation and management</li>
+      <li>Transformation history tracking</li>
+      <li>Basic web UI for interaction</li>
+    </ul>
+    
+    <!-- Link to Azure Design -->
+    <div class="alert alert-info mt-4">
+      <div class="d-flex align-items-center">
+        <div class="me-3">
+          <i class="material-icons-outlined fs-1">cloud</i>
+        </div>
+        <div>
+          <h5 class="mb-1">Azure Deployment Architecture</h5>
+          <p class="mb-0">Explore the detailed Azure cloud deployment architecture for ESB Transformation Service.</p>
+          <a href="/azure-design" class="btn btn-primary mt-2">
+            <i class="material-icons-outlined me-1">launch</i> View Azure Design
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- High Level Architecture Diagram -->
+    <h4 class="mt-4">POC Overview</h4>
+    <div class="text-center mb-4">
+      <svg viewBox="0 0 800 500" width="100%" xmlns="http://www.w3.org/2000/svg" class="architecture-diagram">
+        <!-- Background Layers -->
+        <rect x="50" y="50" width="700" height="100" fill="#e3f2fd" stroke="#2196f3" stroke-width="2" rx="5" ry="5" />
+        <rect x="50" y="170" width="700" height="100" fill="#e8f5e9" stroke="#4caf50" stroke-width="2" rx="5" ry="5" />
+        <rect x="50" y="290" width="700" height="160" fill="#fff3e0" stroke="#ff9800" stroke-width="2" rx="5" ry="5" />
+
+        <!-- Layer Labels -->
+        <text x="70" y="80" font-size="14" font-weight="bold" fill="#1565c0">Presentation Layer</text>
+        <text x="70" y="200" font-size="14" font-weight="bold" fill="#2e7d32">Business Logic Layer</text>
+        <text x="70" y="320" font-size="14" font-weight="bold" fill="#e65100">Data Layer</text>
+
+        <!-- Presentation Layer Components -->
+        <rect x="150" y="90" width="120" height="40" rx="5" ry="5" fill="#bbdefb" stroke="#1976d2" stroke-width="2" />
+        <text x="210" y="115" font-size="14" text-anchor="middle">HTML/Bootstrap</text>
+
+        <rect x="350" y="90" width="120" height="40" rx="5" ry="5" fill="#bbdefb" stroke="#1976d2" stroke-width="2" />
+        <text x="410" y="115" font-size="14" text-anchor="middle">Flask Templates</text>
+
+        <rect x="550" y="90" width="120" height="40" rx="5" ry="5" fill="#bbdefb" stroke="#1976d2" stroke-width="2" />
+        <text x="610" y="115" font-size="14" text-anchor="middle">JavaScript</text>
+
+        <!-- Business Logic Layer Components -->
+        <rect x="150" y="210" width="120" height="40" rx="5" ry="5" fill="#c8e6c9" stroke="#388e3c" stroke-width="2" />
+        <text x="210" y="235" font-size="14" text-anchor="middle">Flask Routes</text>
+
+        <rect x="350" y="210" width="120" height="40" rx="5" ry="5" fill="#c8e6c9" stroke="#388e3c" stroke-width="2" />
+        <text x="410" y="235" font-size="14" text-anchor="middle">ESB Transformer</text>
+
+        <rect x="550" y="210" width="120" height="40" rx="5" ry="5" fill="#c8e6c9" stroke="#388e3c" stroke-width="2" />
+        <text x="610" y="235" font-size="14" text-anchor="middle">OpenAI API</text>
+
+        <!-- Data Layer Components -->
+        <rect x="150" y="330" width="120" height="40" rx="5" ry="5" fill="#ffe0b2" stroke="#f57c00" stroke-width="2" />
+        <text x="210" y="355" font-size="14" text-anchor="middle">XML Files</text>
+
+        <rect x="350" y="330" width="120" height="40" rx="5" ry="5" fill="#ffe0b2" stroke="#f57c00" stroke-width="2" />
+        <text x="410" y="355" font-size="14" text-anchor="middle">Local Storage</text>
+
+        <rect x="550" y="330" width="120" height="40" rx="5" ry="5" fill="#ffe0b2" stroke="#f57c00" stroke-width="2" />
+        <text x="610" y="355" font-size="14" text-anchor="middle">Schema Cache</text>
+
+        <!-- Additional Data Components -->
+        <rect x="150" y="390" width="120" height="40" rx="5" ry="5" fill="#ffe0b2" stroke="#f57c00" stroke-width="2" />
+        <text x="210" y="415" font-size="14" text-anchor="middle">BizTalk Maps</text>
+
+        <rect x="350" y="390" width="120" height="40" rx="5" ry="5" fill="#ffe0b2" stroke="#f57c00" stroke-width="2" />
+        <text x="410" y="415" font-size="14" text-anchor="middle">Transformation Logs</text>
+
+        <rect x="550" y="390" width="120" height="40" rx="5" ry="5" fill="#ffe0b2" stroke="#f57c00" stroke-width="2" />
+        <text x="610" y="415" font-size="14" text-anchor="middle">File History</text>
+
+        <!-- Connections -->
+        <!-- Presentation to Business -->
+        <line x1="210" y1="130" x2="210" y2="210" stroke="#90caf9" stroke-width="2" />
+        <line x1="410" y1="130" x2="410" y2="210" stroke="#90caf9" stroke-width="2" />
+        <line x1="610" y1="130" x2="610" y2="210" stroke="#90caf9" stroke-width="2" />
+
+        <!-- Business to Data -->
+        <line x1="210" y1="250" x2="210" y2="330" stroke="#a5d6a7" stroke-width="2" />
+        <line x1="410" y1="250" x2="410" y2="330" stroke="#a5d6a7" stroke-width="2" />
+        <line x1="610" y1="250" x2="610" y2="330" stroke="#a5d6a7" stroke-width="2" />
+
+        <!-- Horizontal Connections in Business Layer -->
+        <line x1="270" y1="230" x2="350" y2="230" stroke="#a5d6a7" stroke-width="2" />
+        <line x1="470" y1="230" x2="550" y2="230" stroke="#a5d6a7" stroke-width="2" />
+
+        <!-- Data Layer Connections -->
+        <line x1="270" y1="350" x2="350" y2="350" stroke="#ffcc80" stroke-width="2" />
+        <line x1="470" y1="350" x2="550" y2="350" stroke="#ffcc80" stroke-width="2" />
+        <line x1="210" y1="370" x2="210" y2="390" stroke="#ffcc80" stroke-width="2" />
+        <line x1="410" y1="370" x2="410" y2="390" stroke="#ffcc80" stroke-width="2" />
+        <line x1="610" y1="370" x2="610" y2="390" stroke="#ffcc80" stroke-width="2" />
+      </svg>
+    </div>
+  </div>
+</div>
+
+<!-- Key Components -->
+<div class="card architecture-card">
+  <div class="card-header bg-primary text-white">
+    <h4 class="mb-0"><i class="material-icons-outlined align-middle me-2">extension</i>Key Components</h4>
+  </div>
+  <div class="card-body">
+    <div class="row row-cols-1 row-cols-md-3 g-4">
+      <div class="col">
+        <div class="card component-card">
+          <div class="card-body text-center p-4">
+            <div class="component-icon">
+              <i class="material-icons-outlined">transform</i>
+            </div>
+            <h5 class="card-title">Transformation Engine</h5>
+            <p class="card-text">
+              Core component that orchestrates the transformation process between different data formats.
+              Handles conversion logic and data mapping.
+            </p>
+          </div>
+        </div>
+      </div>
+      
+      <div class="col">
+        <div class="card component-card">
+          <div class="card-body text-center p-4">
+            <div class="component-icon">
+              <i class="material-icons-outlined">smart_toy</i>
+            </div>
+            <h5 class="card-title">LLM Agent</h5>
+            <p class="card-text">
+              AI-powered component that uses deep learning to understand and transform complex data structures
+              without explicit mapping rules.
+            </p>
+          </div>
+        </div>
+      </div>
+      
+      <div class="col">
+        <div class="card component-card">
+          <div class="card-body text-center p-4">
+            <div class="component-icon">
+              <i class="material-icons-outlined">schema</i>
+            </div>
+            <h5 class="card-title">Schema Management</h5>
+            <p class="card-text">
+              Handles the validation, storage, and versioning of data schemas. Ensures transformed data
+              complies with target format requirements.
+            </p>
+          </div>
+        </div>
+      </div>
+      
+      <div class="col">
+        <div class="card component-card">
+          <div class="card-body text-center p-4">
+            <div class="component-icon">
+              <i class="material-icons-outlined">storage</i>
+            </div>
+            <h5 class="card-title">Storage System</h5>
+            <p class="card-text">
+              Manages input files, transformation results, and output files. Provides caching and retrieval
+              functionality for the platform.
+            </p>
+          </div>
+        </div>
+      </div>
+      
+      <div class="col">
+        <div class="card component-card">
+          <div class="card-body text-center p-4">
+            <div class="component-icon">
+              <i class="material-icons-outlined">web</i>
+            </div>
+            <h5 class="card-title">Web Interface</h5>
+            <p class="card-text">
+              Intuitive user interface for uploading files, configuring transformations, and viewing results.
+              Includes visualization and metrics dashboards.
+            </p>
+          </div>
+        </div>
+      </div>
+      
+      <div class="col">
+        <div class="card component-card">
+          <div class="card-body text-center p-4">
+            <div class="component-icon">
+              <i class="material-icons-outlined">api</i>
+            </div>
+            <h5 class="card-title">REST API</h5>
+            <p class="card-text">
+              Programmatic interface for integration with external systems. Allows automation of transformation
+              processes and batch operations.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Transformation Process -->
+<div class="card architecture-card">
+  <div class="card-header bg-primary text-white">
+    <h4 class="mb-0"><i class="material-icons-outlined align-middle me-2">sync_alt</i>Transformation Process</h4>
+  </div>
+  <div class="card-body">
+    <p class="lead mb-4">
+      The transformation process flows through several stages, leveraging AI capabilities to intelligently 
+      map data between different formats.
+    </p>
+    
+    <div class="mermaid">
+      sequenceDiagram
+        participant U as User
+        participant C as Controller
+        participant T as Transformer
+        participant L as LLM Agent
+        participant V as Validator
+        participant S as Storage
+        
+        U->>C: Upload File
+        C->>T: Request Transformation
+        T->>L: Request Intelligent Mapping
+        L-->>T: Return Transformation Rules
+        T->>V: Validate Against Schema
+        V-->>T: Validation Results
+        T->>S: Store Results
+        T-->>C: Return Transformation Results
+        C-->>U: Display Results
+    </div>
+    
+    <div class="row mt-4">
+      <div class="col-md-6">
+        <h5><i class="material-icons-outlined align-middle me-2">looks_one</i>Step 1: File Ingestion</h5>
+        <p>Files are uploaded through the web interface or API and validated for proper format. The system identifies the file type and prepares it for processing.</p>
+      </div>
+      
+      <div class="col-md-6">
+        <h5><i class="material-icons-outlined align-middle me-2">looks_two</i>Step 2: Schema Analysis</h5>
+        <p>The system analyzes the source file's structure and compares it with the target schema, identifying the necessary transformations.</p>
+      </div>
+      
+      <div class="col-md-6">
+        <h5><i class="material-icons-outlined align-middle me-2">looks_3</i>Step 3: LLM Processing</h5>
+        <p>The LLM Agent applies intelligence to map data fields, handle complex transformations, and resolve ambiguities in the data.</p>
+      </div>
+      
+      <div class="col-md-6">
+        <h5><i class="material-icons-outlined align-middle me-2">looks_4</i>Step 4: Validation & Output</h5>
+        <p>The transformed data is validated against the target schema, any issues are logged, and the final output is generated in the requested format.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Implementation Details -->
+<div class="card mb-4 border rounded-4">
+  <div class="card-header bg-primary text-white">
+    <h5 class="mb-0"><i class="material-icons-outlined me-2">code</i>Implementation Details</h5>
+  </div>
+  <div class="card-body">
+    <h6 class="mb-3">Directory Structure</h6>
+    <div class="code-block mb-4">
+/ESB
+  ├── app.py              # Main Flask application
+  ├── static/             # Static assets (CSS, JS, images)
+  │   ├── css/            # Stylesheets
+  │   ├── js/             # JavaScript files
+  │   └── images/         # Images and icons
+  ├── templates/          # HTML templates
+  │   ├── base.html       # Base template with layout
+  │   ├── index.html      # Home page
+  │   ├── schemas.html    # Schema management
+  │   └── ...             # Other page templates
+  ├── uploads/            # Directory for uploaded files
+  ├── results/            # Directory for transformation results
+  └── output/             # Directory for final output files
+    </div>
+    
+    <h6 class="mb-3">Key Functions</h6>
+    <div class="row">
+      <div class="col-md-6">
+        <div class="card bg-light mb-3">
+          <div class="card-header">File Transformation</div>
+          <div class="card-body">
+            <p>The application supports various transformation types:</p>
+            <ul>
+              <li>CSV to XML conversion</li>
+              <li>JSON to XML conversion</li>
+              <li>XML to XML transformation</li>
+            </ul>
+            <p>Each transformation type uses specialized parsers and formatters to handle the conversion process.</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="card bg-light mb-3">
+          <div class="card-header">Batch Processing</div>
+          <div class="card-body">
+            <p>Files can be processed individually or in batches:</p>
+            <ul>
+              <li>Batch ID generation for grouped uploads</li>
+              <li>Parallel processing of multiple files</li>
+              <li>Grouped results with navigation between related files</li>
+            </ul>
+            <p>Batch metadata is tracked to maintain relationships between input and output files.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Tech Stack -->
+<div class="card architecture-card mb-4">
+  <div class="card-header bg-primary text-white">
+    <h4 class="mb-0"><i class="material-icons-outlined align-middle me-2">devices</i>Technology Stack</h4>
+  </div>
+  <div class="card-body">
+    <div class="row">
+      <div class="col-md-4">
+        <div class="card mb-3">
+          <div class="card-header">
+            <h5 class="mb-0">Frontend</h5>
+          </div>
+          <div class="card-body">
+            <ul class="list-unstyled">
+              <li><i class="fas fa-check-circle text-success me-2"></i>HTML5 & CSS3</li>
+              <li><i class="fas fa-check-circle text-success me-2"></i>Bootstrap 4</li>
+              <li><i class="fas fa-check-circle text-success me-2"></i>JavaScript</li>
+              <li><i class="fas fa-check-circle text-success me-2"></i>jQuery</li>
+              <li><i class="fas fa-check-circle text-success me-2"></i>Chart.js</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      
+      <div class="col-md-4">
+        <div class="card mb-3">
+          <div class="card-header">
+            <h5 class="mb-0">Backend</h5>
+          </div>
+          <div class="card-body">
+            <ul class="list-unstyled">
+              <li><i class="fas fa-check-circle text-success me-2"></i>Python</li>
+              <li><i class="fas fa-check-circle text-success me-2"></i>Flask</li>
+              <li><i class="fas fa-check-circle text-success me-2"></i>Jinja Templates</li>
+              <li><i class="fas fa-check-circle text-success me-2"></i>XML Processing Libraries</li>
+              <li><i class="fas fa-check-circle text-success me-2"></i>JSON & CSV Parsers</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      
+      <div class="col-md-4">
+        <div class="card mb-3">
+          <div class="card-header">
+            <h5 class="mb-0">AI Components</h5>
+          </div>
+          <div class="card-body">
+            <ul class="list-unstyled">
+              <li><i class="fas fa-check-circle text-success me-2"></i>OpenAI GPT Models</li>
+              <li><i class="fas fa-check-circle text-success me-2"></i>LangChain Framework</li>
+              <li><i class="fas fa-check-circle text-success me-2"></i>Prompt Engineering</li>
+              <li><i class="fas fa-check-circle text-success me-2"></i>AI Orchestration</li>
+              <li><i class="fas fa-check-circle text-success me-2"></i>NLP Components</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Deployment Options -->
+<div class="card border rounded-4">
+  <div class="card-header bg-primary text-white">
+    <h5 class="mb-0"><i class="material-icons-outlined me-2">cloud_upload</i>Deployment</h5>
+  </div>
+  <div class="card-body">
+    <p>The POC architecture can be deployed in several ways:</p>
+    
+    <div class="row mt-4">
+      <div class="col-md-4">
+        <div class="card bg-light h-100">
+          <div class="card-body text-center">
+            <i class="fas fa-laptop-code mb-3" style="font-size: 2.5rem; color: #0078d4;"></i>
+            <h5>Local Development</h5>
+            <p>Run directly on a developer machine with Python and Flask for rapid development and testing.</p>
+            <div class="mt-3">
+              <code>python app.py</code>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="col-md-4">
+        <div class="card bg-light h-100">
+          <div class="card-body text-center">
+            <i class="fas fa-box mb-3" style="font-size: 2.5rem; color: #0078d4;"></i>
+            <h5>Containerized</h5>
+            <p>Package as a Docker container for consistent deployment across different environments.</p>
+            <div class="mt-3">
+              <code>docker build -t esb-transformer .</code><br>
+              <code>docker run -p 5000:5000 esb-transformer</code>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="col-md-4">
+        <div class="card bg-light h-100">
+          <div class="card-body text-center">
+            <i class="fas fa-server mb-3" style="font-size: 2.5rem; color: #0078d4;"></i>
+            <h5>Web Server</h5>
+            <p>Deploy with a production WSGI server like Gunicorn behind Nginx for better performance.</p>
+            <div class="mt-3">
+              <code>gunicorn -w 4 -b 0.0.0.0:5000 app:app</code>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="alert alert-info mt-4">
+      <h5 class="alert-heading"><i class="fas fa-info-circle me-2"></i>Azure Cloud Deployment</h5>
+      <p>For a production-ready deployment, we recommend using our Azure architecture which provides enterprise-grade scalability, security, and resilience features.</p>
+      <hr>
+      <p class="mb-0">
+        <a href="/azure-design" class="btn btn-primary"><i class="fas fa-cloud me-2"></i>View Azure Architecture Design</a>
+      </p>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  // Any architecture-specific scripts can go here
+</script>
+{% endblock %} 

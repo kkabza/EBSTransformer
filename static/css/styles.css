@@ -123,4 +123,45 @@ label.btn:hover {
 
 @keyframes spin {
   to { transform: rotate(360deg); }
+}
+
+/* Sidebar submenu styles */
+.sidebar-menu li {
+  position: relative;
+}
+
+.sidebar-menu .submenu {
+  display: none;
+  list-style: none;
+  padding-left: 20px;
+  margin: 5px 0 0 10px;
+  border-left: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.sidebar-menu li.active .submenu {
+  display: block;
+}
+
+.sidebar-menu .submenu li {
+  margin: 5px 0;
+}
+
+.sidebar-menu .submenu li a {
+  padding: 6px 10px;
+  font-size: 0.9rem;
+  opacity: 0.8;
+  display: flex;
+  align-items: center;
+  transition: all 0.3s ease;
+}
+
+.sidebar-menu .submenu li a:hover {
+  opacity: 1;
+  padding-left: 15px;
+}
+
+.sidebar-menu .submenu li.active a {
+  color: var(--primary-color);
+  opacity: 1;
+  font-weight: 500;
 } 

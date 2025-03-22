@@ -1,0 +1,245 @@
+{% extends "base.html" %}
+
+{% block title %}Output Files{% endblock %}
+
+{% block page_title %}
+<div class="d-flex align-items-center">
+  <div>
+    <i class="material-icons-outlined align-middle me-2 fs-2">folder_open</i>
+  </div>
+  <div>
+    <h3 class="mb-0">Output Files</h3>
+    <p class="text-secondary mb-0">View and download transformed output files</p>
+  </div>
+</div>
+{% endblock %}
+
+{% block content %}
+<!-- Files Section -->
+<div class="card rounded-4 border">
+  <div class="card-body">
+    <div class="mb-4 d-flex justify-content-between align-items-center">
+      <div>
+        <h5 class="mb-0">
+          <i class="material-icons-outlined align-middle me-2">folder</i>
+          Output Directory
+        </h5>
+        <p class="text-secondary mb-0">{{ files|length }} files found in {{ transformation_groups|length }} batches</p>
+      </div>
+      <div>
+        <button id="refresh-btn" class="btn btn-sm btn-outline-primary rounded-3">
+          <i class="material-icons-outlined align-middle me-1">refresh</i> Refresh
+        </button>
+      </div>
+    </div>
+    
+    <!-- Group by batch sections -->
+    {% for group in transformation_groups %}
+    <div class="card mb-3 border">
+      <div class="card-header bg-light d-flex justify-content-between align-items-center" 
+           role="button" 
+           data-toggle="collapse" 
+           data-target="#group-{{ loop.index }}" 
+           aria-expanded="true"
+           aria-controls="group-{{ loop.index }}">
+        <div>
+          <h5 class="mb-0">
+            {% if group.is_ungrouped %}
+              <i class="material-icons-outlined align-middle me-2">folder</i>
+              {{ group.name }}
+            {% else %}
+              {% if "output" in group.name|lower %}
+                <span class="badge bg-success me-2">OUTPUT</span>
+                <i class="material-icons-outlined align-middle me-2">output</i>
+              {% else %}
+                <span class="badge bg-primary me-2">SOURCE</span>
+                <i class="material-icons-outlined align-middle me-2">input</i>
+              {% endif %}
+              {{ group.name }}
+              {% if group.id %}
+                <span class="badge bg-secondary ms-2">ID: {{ group.id[:8] }}</span>
+              {% endif %}
+            {% endif %}
+          </h5>
+          <p class="text-secondary mb-0">{{ group.file_count }} files, {{ group.total_size }}, last modified {{ group.latest_modified }}</p>
+        </div>
+        <i class="material-icons-outlined collapse-icon">expand_less</i>
+      </div>
+      
+      <div id="group-{{ loop.index }}" class="collapse show">
+        <div class="card-body p-0">
+          <div class="table-responsive">
+            <table class="table table-hover mb-0">
+              <thead>
+                <tr>
+                  <th>Original Filename</th>
+                  <th>Transformed Filename</th>
+                  <th>Size</th>
+                  <th>Date Modified</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for file in group.files %}
+                <tr>
+                  <td>
+                    <div class="d-flex align-items-center">
+                      <i class="material-icons-outlined text-secondary me-2">insert_drive_file</i>
+                      <span>{{ file.original_name }}</span>
+                    </div>
+                  </td>
+                  <td>
+                    <div class="d-flex align-items-center">
+                      <i class="material-icons-outlined text-primary me-2">description</i>
+                      <span>{{ file.name }}</span>
+                    </div>
+                  </td>
+                  <td>{{ file.size }}</td>
+                  <td>{{ file.modified }}</td>
+                  <td>
+                    <div class="d-flex">
+                      <a href="#" class="btn btn-sm btn-outline-primary rounded-3 me-2 view-file" data-file-path="{{ file.path }}">
+                        <i class="material-icons-outlined align-middle">visibility</i>
+                      </a>
+                      <a href="{{ url_for('download_output_file', file=file.name) }}" class="btn btn-sm btn-outline-secondary rounded-3">
+                        <i class="material-icons-outlined align-middle">download</i>
+                      </a>
+                    </div>
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+
+<!-- File Preview Modal -->
+<div class="modal fade" id="filePreviewModal" tabindex="-1" role="dialog" aria-labelledby="filePreviewModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
+    <div class="modal-content rounded-4" style="background-color: #2d2d2d; color: #f8f9fa;">
+      <div class="modal-header" style="border-bottom-color: #444;">
+        <h5 class="modal-title" id="filePreviewModalLabel" style="color: #f8f9fa;">File Preview</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" style="color: #f8f9fa;">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="mb-3">
+          <label class="form-label" style="color: #f8f9fa;">File Content</label>
+          <div class="file-preview-container" style="max-height: 600px; overflow: auto; background-color: #2d2d2d; border: 1px solid #444; border-radius: 4px;">
+            <pre style="padding: 15px; margin: 0; white-space: pre-wrap;"><code id="file-preview-content" class="language-xml" style="color: #f8f9fa;"></code></pre>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer" style="border-top-color: #444;">
+        <button type="button" class="btn btn-dark rounded-3" data-dismiss="modal">Close</button>
+        <a href="#" id="download-file-btn" class="btn btn-primary rounded-3">
+          <i class="material-icons-outlined align-middle me-1">download</i> Download
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Store the current file path when viewing
+    let currentFilePath = null;
+    
+    // Handle view file buttons
+    document.querySelectorAll('.view-file').forEach(function(btn) {
+      btn.addEventListener('click', function(e) {
+        e.preventDefault();
+        
+        const filePath = this.getAttribute('data-file-path');
+        if (filePath) {
+          // Store current file path for download
+          currentFilePath = filePath;
+          
+          // Fetch the file content from the server
+          fetch(`/outputs/view?file=${encodeURIComponent(filePath)}`)
+            .then(response => {
+              if (!response.ok) {
+                throw new Error('Failed to load file content');
+              }
+              return response.json();
+            })
+            .then(data => {
+              // Update the modal title and content
+              const modal = document.getElementById('filePreviewModal');
+              modal.querySelector('.modal-title').textContent = data.filename || 'File Preview';
+              
+              // Apply syntax highlighting based on file extension
+              const contentElement = document.getElementById('file-preview-content');
+              const fileExt = data.filename.split('.').pop().toLowerCase();
+              
+              let content = data.content || 'No file content available';
+              
+              // Apply syntax highlighting based on file type
+              if (['xml', 'xsd', 'html'].includes(fileExt)) {
+                content = content.replace(/&/g, '&amp;')
+                               .replace(/</g, '&lt;')
+                               .replace(/>/g, '&gt;')
+                               .replace(/("[^"]*")/g, '<span style="color: #a6e22e;">$1</span>')
+                               .replace(/&lt;(\/?[a-zA-Z0-9_:-]+)/g, '&lt;<span style="color: #f92672;">$1</span>')
+                               .replace(/([a-zA-Z0-9_:-]+)=/g, '<span style="color: #66d9ef;">$1</span>=');
+              } else if (['json'].includes(fileExt)) {
+                content = content.replace(/&/g, '&amp;')
+                               .replace(/</g, '&lt;')
+                               .replace(/>/g, '&gt;')
+                               .replace(/("[^"]*"):/g, '<span style="color: #f92672;">$1</span>:')
+                               .replace(/: ("[^"]*")/g, ': <span style="color: #a6e22e;">$1</span>')
+                               .replace(/: (true|false|null)/g, ': <span style="color: #66d9ef;">$1</span>')
+                               .replace(/: (\d+(\.\d+)?)/g, ': <span style="color: #ae81ff;">$1</span>');
+              }
+              
+              contentElement.innerHTML = content;
+              
+              // Set the download button href
+              const downloadBtn = document.getElementById('download-file-btn');
+              downloadBtn.href = `/outputs/download?file=${encodeURIComponent(data.filename)}`;
+              
+              // Show the modal using Bootstrap 4 syntax
+              $('#filePreviewModal').modal('show');
+            })
+            .catch(error => {
+              console.error('Error loading file:', error);
+              alert('Failed to load file content. Please try again.');
+            });
+        }
+      });
+    });
+    
+    // Handle refresh button
+    document.getElementById('refresh-btn').addEventListener('click', function() {
+      window.location.reload();
+    });
+    
+    // Handle collapsible sections
+    document.querySelectorAll('.card-header[data-toggle="collapse"]').forEach(function(header) {
+      header.addEventListener('click', function() {
+        const target = document.querySelector(this.getAttribute('data-target'));
+        if (target) {
+          const isExpanded = this.getAttribute('aria-expanded') === 'true';
+          this.setAttribute('aria-expanded', !isExpanded);
+          
+          if (isExpanded) {
+            target.classList.remove('show');
+            this.querySelector('.collapse-icon').textContent = 'expand_more';
+          } else {
+            target.classList.add('show');
+            this.querySelector('.collapse-icon').textContent = 'expand_less';
+          }
+        }
+      });
+    });
+  });
+</script>
+{% endblock %} 

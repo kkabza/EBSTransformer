@@ -1,0 +1,73 @@
+/* BizTalk comparison table styles with high specificity to prevent overrides */
+
+.special-comparison-marker.comparison-table {
+  width: 100% !important;
+  border-collapse: separate !important;
+  border-spacing: 0 !important;
+  margin-bottom: 2rem !important;
+  display: table !important;
+  border: 3px solid #4BBEB3 !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3) !important;
+  background-color: #1a1f2b !important;
+  border-radius: 10px !important;
+  overflow: hidden !important;
+}
+
+.special-comparison-marker.comparison-table thead {
+  display: table-header-group !important;
+}
+
+.special-comparison-marker.comparison-table tbody {
+  display: table-row-group !important;
+}
+
+.special-comparison-marker.comparison-table tr {
+  display: table-row !important;
+}
+
+.special-comparison-marker.comparison-table th,
+.special-comparison-marker.comparison-table td {
+  padding: 1rem !important;
+  text-align: left !important;
+  border: 1px solid #333945 !important;
+  display: table-cell !important;
+  color: #e0e0e0 !important;
+}
+
+.special-comparison-marker.comparison-table th {
+  background-color: #2d3748 !important;
+  color: white !important;
+  font-weight: 600 !important;
+  border-bottom: 2px solid #4BBEB3 !important;
+}
+
+.special-comparison-marker.comparison-table tr:nth-child(even) {
+  background-color: rgba(30, 40, 60, 0.8) !important;
+}
+
+.special-comparison-marker.comparison-table tr:nth-child(odd) {
+  background-color: rgba(20, 30, 45, 0.8) !important;
+}
+
+.special-comparison-marker.comparison-table tr:hover {
+  background-color: rgba(75, 190, 179, 0.1) !important;
+  transition: background-color 0.3s ease !important;
+}
+
+.special-comparison-marker.comparison-table td strong {
+  color: #4BBEB3 !important;
+  font-weight: 600 !important;
+}
+
+.special-comparison-marker.comparison-table td:nth-child(2) {
+  color: rgba(255, 255, 255, 0.9) !important;
+}
+
+.special-comparison-marker.comparison-table td:nth-child(3) {
+  color: rgba(255, 255, 255, 0.7) !important;
+}
+
+.table-responsive .special-comparison-marker.comparison-table {
+  display: table !important;
+  width: 100% !important;
+} 

@@ -23,6 +23,7 @@
     <!-- Custom CSS -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/comparison.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/biztalk_comparison.css') }}">
     
     {% block head %}{% endblock %}
 </head>
@@ -41,8 +42,8 @@
                         </a>
                     </div>
                     <div class="d-flex align-items-center">
-                        <a href="/documentation" class="btn btn-sm btn-outline-light mr-2">
-                            <i class="fas fa-book"></i> Documentation
+                        <a href="/transformations" class="btn btn-sm btn-outline-light mr-2">
+                            <i class="fas fa-exchange-alt"></i> Transformations
                         </a>
                         <a href="https://github.com/yourusername/esb-transformer" target="_blank" class="btn btn-sm btn-outline-light">
                             <i class="fab fa-github"></i> GitHub
@@ -76,10 +77,48 @@
                         <span class="menu-text">Schemas</span>
                     </a>
                 </li>
-                <li class="{{ 'active' if '/documentation' in request.path else '' }}">
-                    <a href="/documentation">
-                        <i class="fas fa-book"></i>
-                        <span class="menu-text">Documentation</span>
+                <li class="{{ 'active' if '/outputs' in request.path else '' }}">
+                    <a href="/outputs">
+                        <i class="fas fa-folder-open"></i>
+                        <span class="menu-text">Outputs</span>
+                    </a>
+                </li>
+                <li class="menu-header">
+                    <span>Solution Details</span>
+                </li>
+                <li class="{{ 'active' if '/poc-architecture' in request.path or '/architecture' in request.path or '/azure-design' in request.path else '' }}">
+                    <a href="/poc-architecture">
+                        <i class="fas fa-project-diagram"></i>
+                        <span class="menu-text">POC Architecture</span>
+                    </a>
+                    <ul class="submenu">
+                        <li class="{{ 'active' if '/azure-design' in request.path else '' }}">
+                            <a href="/azure-design">
+                                <i class="fas fa-cloud"></i>
+                                <span class="menu-text">Azure Design</span>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+                <li class="{{ 'active' if '/biztalk-comparison' in request.path else '' }}">
+                    <a href="/biztalk-comparison">
+                        <i class="fas fa-balance-scale"></i>
+                        <span class="menu-text">BizTalk Replacement</span>
+                    </a>
+                </li>
+                <li class="{{ 'active' if '/llm-agent' in request.path else '' }}">
+                    <a href="/llm-agent">
+                        <i class="fas fa-robot"></i>
+                        <span class="menu-text">LLM Agent</span>
+                    </a>
+                </li>
+                <li class="menu-header">
+                    <span>Help</span>
+                </li>
+                <li class="{{ 'active' if '/transformations' in request.path else '' }}">
+                    <a href="/transformations">
+                        <i class="fas fa-exchange-alt"></i>
+                        <span class="menu-text">Transformations</span>
                     </a>
                 </li>
             </ul>
@@ -117,7 +156,7 @@
                                 &copy; {{ now.year }} Enterprise Service Bus - XML Transformation Service
                             </div>
                             <div class="footer-links">
-                                <a href="/documentation">Documentation</a>
+                                <a href="/transformations">Transformations</a>
                                 <a href="/about">About</a>
                             </div>
                         </div>
