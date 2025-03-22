@@ -85,7 +85,7 @@ jobs:
         general-settings-json: |
           {
             "linuxFxVersion": "PYTHON|3.10",
-            "appCommandLine": "/home/site/wwwroot/startup.sh"
+            "appCommandLine": "gunicorn --bind=0.0.0.0:8000 azure_app:app"
           }
       env:
         AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }} 
