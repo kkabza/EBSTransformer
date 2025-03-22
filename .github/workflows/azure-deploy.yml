@@ -32,13 +32,15 @@ jobs:
         mkdir -p uploads
         mkdir -p schema_uploads
         mkdir -p traces
+        mkdir -p results
+        mkdir -p output
         touch uploads/.gitkeep
         touch schema_uploads/.gitkeep
         touch traces/.gitkeep
         echo "from app import app" > wsgi.py
         echo "" >> wsgi.py
         echo 'if __name__ == "__main__":' >> wsgi.py
-        echo '    app.run()' >> wsgi.py
+        echo '    app.run(host="0.0.0.0", port=8000)' >> wsgi.py
         cat wsgi.py
 
     - name: Deploy to Azure Web App
@@ -57,7 +59,7 @@ jobs:
           [
             {
               "name": "WEBSITES_PORT",
-              "value": "5000",
+              "value": "8000",
               "slotSetting": false
             },
             {
@@ -69,12 +71,22 @@ jobs:
               "name": "FLASK_APP",
               "value": "wsgi.py",
               "slotSetting": false
+            },
+            {
+              "name": "OPENAI_API_KEY",
+              "value": "${{ secrets.OPENAI_API_KEY }}",
+              "slotSetting": false
+            },
+            {
+              "name": "OPENAI_MODEL",
+              "value": "gpt-4-turbo",
+              "slotSetting": false
             }
           ]
         general-settings-json: |
           {
             "linuxFxVersion": "PYTHON|3.10",
-            "appCommandLine": "gunicorn --bind=0.0.0.0 --timeout 600 wsgi:app"
+            "appCommandLine": "gunicorn --bind=0.0.0.0:8000 --timeout 600 wsgi:app"
           }
       env:
         AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }} 
