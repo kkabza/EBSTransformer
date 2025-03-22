@@ -27,7 +27,7 @@ jobs:
         pip install gunicorn
         pip freeze | grep gunicorn
 
-    - name: Create necessary directories
+    - name: Create necessary directories and wsgi file
       run: |
         mkdir -p uploads
         mkdir -p schema_uploads
@@ -35,6 +35,11 @@ jobs:
         touch uploads/.gitkeep
         touch schema_uploads/.gitkeep
         touch traces/.gitkeep
+        echo "from app import app" > wsgi.py
+        echo "" >> wsgi.py
+        echo 'if __name__ == "__main__":' >> wsgi.py
+        echo '    app.run()' >> wsgi.py
+        cat wsgi.py
 
     - name: Deploy to Azure Web App
       uses: azure/webapps-deploy@v2
@@ -62,14 +67,14 @@ jobs:
             },
             {
               "name": "FLASK_APP",
-              "value": "app.py",
+              "value": "wsgi.py",
               "slotSetting": false
             }
           ]
         general-settings-json: |
           {
             "linuxFxVersion": "PYTHON|3.10",
-            "appCommandLine": "gunicorn --bind=0.0.0.0 --timeout 600 app:app"
+            "appCommandLine": "gunicorn --bind=0.0.0.0 --timeout 600 wsgi:app"
           }
       env:
         AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }} 
